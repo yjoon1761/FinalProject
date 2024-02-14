@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/petcard.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script src="https://kit.fontawesome.com/32dee6c2b4.js" crossorigin="anonymous"></script>
+    <script src="/js/page.js"></script>
+
+    <title>펫 카드등록</title>
+</head>
+<body>
+
+
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+
+<section id="content">
+    <article id="pcboard-content">
+        <div id="pcboard-title">
+            <h1>배송정보를 입력해 주세요</h1>
+        </div>
+        <form action="/kPayReady" method="get" id="crdJoinForm">
+            <table class="pcregi-table">
+                <tr class="pcregi-section">
+                    <th>발급할 펫</th>
+                    <td id="petArea"></td>
+                </tr>
+
+                <tr class="pcregi-section">
+                    <th>이름(수령인)</th>
+                    <td><input type="text" id="crdName" name="crdName"/></td>
+                </tr>
+
+                <tr class="pcregi-section">
+                    <th>연락처</th>
+                    <td><input type="text" id="crdPhone" name="crdPhone" placeholder="전화번호입력"/></td>
+                </tr>
+
+                <tr class="pcregi-section">
+                    <th style="height: 150px;">주소</th>
+                    <td><input style="margin-left: -5px;" type="text" id="sample6_postcode" placeholder="우편번호" size="25"/>
+                        <input type="button" onclick="sample6_execDaumPostcode()" value="우편번호 찾기" style="font-weight: bold; color: brown; border-radius: 15px; cursor: pointer"/><br/>
+                        <input type="text" size="40" id="sample6_address" placeholder="주소"/><br/>
+                        <input type="text" size="40" id="sample6_detailAddress" placeholder="상세주소"/>
+                        <input type="hidden" id="crdAddr" name="crdAddr"/></td>
+                </tr>
+
+                <tr class="pcregi-button pcregi-section">
+                    <th colspan="2">
+                        <input style="font-weight: bold; color: brown; border-radius: 15px; cursor: pointer" type="button" id="submitForm" value="결제">
+                        <input style="font-weight: bold; color: brown; border-radius: 15px; cursor: pointer" type="reset" value="다시 작성">
+                    </th>
+                </tr>
+            </table>
+        </form>
+    </article>
+</section>
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+</body>
+
+<script th:src="@{https://code.jquery.com/jquery-3.7.1.js}" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script th:src="@{//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js}"></script>
+<script>
+    $(()=>{
+        $.ajax({
+            url : "/pRegiList",
+            type : "post",
+            dataType : "json",
+            success : function(result){
+                list = result;
+                selectPet(list);
+            },
+            error : function (){
+                alert('pRegiList 함수 호출 실패!');
+            }
+        });
+    });
+
+    function selectPet(list){
+        let output = "";
+
+        output += `<select name="pNo">`;
+
+        for (let i in list){
+            output += `<option value="${list[i].pno}">${list[i].pname}</option>`;
+        }
+
+        output += `</select>`;
+
+        $("#petArea").html(output);
+    }
+
+    function sample6_execDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function (data) {
+                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                var addr = ''; // 주소 변수
+
+                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                    addr = data.roadAddress;
+                } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                    addr = data.jibunAddress;
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById('sample6_postcode').value = data.zonecode;
+                document.getElementById("sample6_address").value = addr;
+                // 커서를 상세주소 필드로 이동한다.
+                document.getElementById("sample6_detailAddress").focus();
+
+            }
+        }).open();
+    }
+
+    $('#submitForm').click(()=>{
+        let crdAddr = $('#crdAddr');
+
+        let addr1 = $('#sample6_postcode').val();
+        let addr2 = $('#sample6_address').val();
+        let addr3 = $('#sample6_detailAddress').val();
+        let addr = `(${addr1}) ${addr2}, ${addr3}`;
+
+        crdAddr.val(addr);
+
+        crdJoinForm.submit();
+
+    });
+</script>
+</html>

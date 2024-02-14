@@ -1,0 +1,81 @@
+#contentview {
+    z-index: 1;
+    background-color: rgba(250, 244, 192, 0.3);
+    margin-bottom: 10px;
+    display: flex;
+    float: none;
+}
+
+#modiForm{
+    margin-left: 120px;
+}
+
+.myinfo-side-menu{
+    display: inline-block;
+    width: 280px;
+    background-color: rgba(250, 244, 192, 0.3);
+}
+
+.myinfo-side-menu ul {
+    margin-left: 50px;
+    text-align: center;
+    display: inline-block;
+}
+
+.myinfo-side-menu li {
+    border: 2px solid sandybrown;
+    margin-top: 50px;
+    width: 200px;
+    border-radius: 10px;
+    height: 70px;
+    line-height: 70px;
+}
+.myinfo-side-menu a, .myinfo-side-menu a:visited, .myinfo-side-menu a:active  {
+    font-size: large;
+    font-weight: bold;
+}
+
+.myinfo-side-menu a{
+    color: brown;
+    text-align: center;
+}
+
+
+.myinfo-side-menu li:hover{
+    background-color: #faf4c0;
+    cursor: grabbing;
+}
+
+.myinfo-main{
+    margin-left: 10px;
+    display: inline-block;
+    background-color: unset;
+}
+
+.plist{
+    margin-left: 150px;
+    display: inline-block;
+    background-color: unset;
+}
+
+.pmodi{
+    margin-left: 100px;
+    display: inline-block;
+    background-color: unset;
+}
+
+.numbering, .page-prev, .iNum, .page-next{
+    font-size:20px;
+    margin-top: 50px;
+    text-align: center;
+}
+
+.resDelete {
+    width: 50px;
+    height: 40px;
+    background: sandybrown;
+}
+
+.board-foot a, .board-foot a:visited, .board-foot a:active{
+    color: black;
+}

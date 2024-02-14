@@ -1,0 +1,419 @@
+/* 정보마당 || Q&A 페이지 */
+
+#board-search {
+    width: 1100px;
+    margin: 0 auto;
+}
+
+.category {
+    height: 40px;
+}
+
+.search-text {
+    height: 37px;
+    width: 250px;
+}
+
+.search-btn {
+    width: 40px;
+    height: 40px;
+    background-color: sandybrown;
+}
+
+#board-title h1 {
+    text-align: center;
+    color: brown;
+    padding-top: 20px;
+    margin-bottom: 20px;
+    font-size: 30px;
+}
+
+.board-table {
+    width: 1100px;
+    margin: auto;
+    font-size: 13px;
+    border-top: 1px solid sandybrown;
+    border-bottom: 1px solid sandybrown;
+}
+
+.board-table th {
+    text-align: center;
+}
+
+.board-table .th-no {
+    width: 100px;
+    text-align: center;
+}
+
+.board-table .th-date {
+    width: 200px;
+}
+
+.board-table td, .board-table th {
+    padding: 14px 0;
+}
+
+.board-table tbody td {
+    border-top: 1px solid sandybrown;
+    text-align: center;
+}
+
+.board-table tbody th {
+    padding-left: 28px;
+    padding-right: 14px;
+    border-top: 1px solid sandybrown;
+    text-align: left;
+}
+
+.numbering, .page-prev, .iNum, .page-next{
+    font-size:20px;
+    margin-top: 50px;
+    text-align: center;
+}
+
+.btn {
+    width: 100px;
+    height: 40px;
+    margin-top: 5px;
+    float: right;
+    background-color: sandybrown;
+    border-radius: 4px;
+}
+.btn-box{
+    width: 1100px;
+    margin: auto;
+}
+
+.board-foot {
+    /*width: 1100px;*/
+    margin: auto;
+}
+
+/* 정보마당 || Q&A 페이지 종료 */
+
+/* 메인 페이지 정보마당 공간 */
+
+
+
+/* 메인 페이지 정보마당 공간 종료 */
+
+/* 갤러리 페이지 */
+
+.gallery-box table, .gallery-box th, .gallery-box tr, .gallery-box td{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+[class*="gtext"]{
+    background-color: white;
+    border-radius: 5px;
+}
+
+.gtext-hit {
+     padding-bottom: 2px;
+}
+
+.gtext-hit img {
+    width: 20px;
+    transform: translateY(4px);
+}
+
+/*.post-section {*/
+/*    height: 300px;*/
+/*    width: 20%;*/
+/*    border:double 3px black;*/
+/*    text-align: center;*/
+/*    margin: 100px 48px;*/
+/*}*/
+.post-text {
+    margin-top: 10px; /*post-section div와 간격을 주기 위해*/
+    font-size: 16px;
+}
+
+.hit-section{
+    width: 20%;
+    border-bottom: solid 2px;
+    margin: -50px 50px 100px;
+}
+.hit{
+    margin-top: 50px; /*post-section div와 간격을 주기 위해*/
+    font-size: 16px;
+    text-align: left;
+}
+.post{
+    width: 250px;
+    height: 250px;
+}
+
+#bdList{
+    margin-top: 50px;
+    width: 100%;
+}
+
+#bdList a, #bdList a:visited, #bdList a:active {
+    color : black;
+}
+
+.container{
+    width: 100%;
+    text-align: center;
+}
+
+/* 갤러리 페이지 종료 */
+
+/* 게시물 등록 페이지 */
+
+#bregi-title h1 {
+    text-align: center;
+    color: brown;
+    margin-bottom: 20px;
+    font-size: 30px;
+}
+
+.bregi-table {
+    width: 700px;
+    text-align: center;
+    margin: auto;
+}
+
+.bregi-section:nth-child(odd) {
+    background-color: #faf4c0;
+}
+
+.bregi-table, .bregi-table tr, .bregi-table td, .bregi-table th{
+    border: 3px solid sandybrown;
+    border-collapse: collapse;
+    height: 50px;
+}
+
+.bregi-table select, .bregi-table input[type="text"], .bregi-table textarea {
+    border: 1px solid sandybrown;
+    border-radius: 4px;
+}
+
+.bregi-table select{
+    width: 80.5%;
+    height: 25px;
+    text-align: center;
+}
+
+.bregi-table input[type="text"] {
+    width: 80%;
+    height: 30px;
+}
+
+.bregi-table textarea {
+    width: 80%;
+    height: 300px;
+    margin: 10px;
+}
+
+.bregi-table input[type="submit"] {
+    width: 150px;
+    height: 35px;
+    border: 1px solid black;
+    border-radius: 4px;
+    background: sandybrown;
+}
+
+.bregi-table .filebox .upload-name {
+    width: 74%;
+    height: 40px;
+    padding: 0 10px;
+    vertical-align: middle;
+    border: 1px solid brown;
+    border-radius: 5px;
+}
+
+.upload-name:active {
+    outline: 0;
+}
+
+.bregi-table .filebox label {
+    padding: 10px 20px;
+    color: black;
+    vertical-align: middle;
+    background-color: sandybrown;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+.bregi-table .filebox input[type="file"] {
+    position: absolute;
+    width: 0;
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+}
+
+/* 게시물 등록 페이지 종료 */
+
+/* 정보마당 상세보기 페이지 */
+
+/*#bView-title h1 {*/
+/*    text-align: center;*/
+/*    color: brown;*/
+/*    margin-bottom: 20px;*/
+/*    font-size: 30px;*/
+/*}*/
+
+.bView-container {
+    width: 500px;
+    margin: auto;
+    text-align: center;
+}
+
+.bView-table {
+    width: 700px;
+    text-align: center;
+    margin: auto;
+}
+
+.bView-section:nth-child(odd) {
+    background-color: #faf4c0;
+}
+
+.bView-table, .bView-table tr, .bView-table td, .bView-table th{
+    border: 3px solid sandybrown;
+    border-collapse: collapse;
+    height: 50px;
+    word-wrap: break-word; /*강제 줄바꿈(특수문자 포함)*/
+    min-width: 80px;
+    max-width: 700px;
+}
+
+.bView-table th {
+    width: 120px;
+}
+
+.bView-table button {
+    width: 100px;
+    height: 70%;
+    background-color: sandybrown;
+    border-radius: 4px;
+}
+
+.bView-cmt{
+    width: 700px;
+    margin: 20px auto;
+
+}
+.gView-cmt textarea {
+    width: 600px;
+    height: 100px;
+    border: 1px solid sandybrown;
+}
+
+
+.cmtArea-title{
+    white-space: nowrap;
+}
+
+.gView-cmt textarea {
+    width: 600px;
+    height: 100px;
+    border: 1px solid sandybrown;
+}
+
+
+.bView-cmt button {
+    transform: translate(-4px, -39%);
+    width: 90px;
+    height: 50px;
+    background-color: sandybrown;
+    border-radius: 4px;
+}
+
+/* 정보마당 상세보기 페이지 종료 */
+
+/*갤러리 상세보기 페이지 시작*/
+/*#gView-title h1 {*/
+/*    text-align: center;*/
+/*    color: brown;*/
+/*    margin-bottom: 20px;*/
+/*    font-size: 30px;*/
+/*}*/
+
+.gView-container {
+    width: 500px;
+    margin: auto;
+    text-align: center;
+}
+
+.gView-table {
+    width: 700px;
+    text-align: center;
+    margin: auto;
+}
+
+.gView-section:nth-child(odd) {
+    background-color: #faf4c0;
+}
+
+.gView-table, .gView-table tr, .gView-table td, .gView-table th{
+    border: 3px solid sandybrown;
+    border-collapse: collapse;
+    height: 50px;
+    border: 3px solid sandybrown;
+    border-collapse: collapse;
+    height: 50px;
+    word-wrap: break-word; /*강제 줄바꿈(특수문자 포함)*/
+    min-width: 80px;
+    max-width: 700px;
+}
+
+.gView-table th {
+    width: 120px;
+}
+
+.gView-table button {
+    width: 100px;
+    height: 70%;
+    background-color: sandybrown;
+    border-radius: 4px;
+}
+
+.gView-cmt{
+    width: 700px;
+    margin: 20px auto;
+
+}
+
+#cmtArea{
+    width: 700px;
+
+}
+.cmt{
+    width: 700px;
+}
+.cmtArea-title{
+    white-space: nowrap;
+}
+
+.gView-cmt textarea {
+    width: 600px;
+    height: 100px;
+    border: 1px solid sandybrown;
+}
+
+#writeBtn{
+    width: 90px;
+    height: 30px;
+    background-color: sandybrown;
+    border-radius: 4px;
+    transform: translateY(-8px);
+}
+.cmtDelete, .cmtModify{
+    width: 80px;
+    height: 30px;
+    background-color: sandybrown;
+    border-radius: 4px;
+    margin: 0px -10px;
+}
+.ccontent {
+    word-wrap: break-word; /*강제 줄바꿈(특수문자 포함)*/
+    max-width: 200px;
+}
+
+/*갤러리 상세보기 페이지 끝*/

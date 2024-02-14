@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/find.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="/js/page.js"></script>
+
+    <title>아이디 찾기</title>
+</head>
+
+<body>
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+<section id="content">
+    <article id="find-content">
+        <div id="find-title">
+            <div class="find-container">
+                <h1>아이디 찾기</h1>
+            </div>
+        </div>
+        <form action="/mIdFind" method="POST" name="mIdFindForm">
+        <div class="find-container">
+            <div class="find-area">
+                <input type="email" id="findIdEmail"  name="findIdEmail" placeholder="이메일을 작성해주세요"/><br/>
+                <input type="text" id="findIdPhone" name="findIdPhone"  placeholder="연락처 작성해주세요" /><br/>
+                <div class="btn-find">
+                    <input type="button" value="아이디 찾기" id="submitForm"/>
+                </div>
+            </div>
+        </div>
+        </form>
+    </article>
+</section>
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+</body>
+
+<script th:src="@{http://code.jquery.com/jquery-latest.min.js}"></script>
+<script>
+    let findIdEmail = $('#findIdEmail');
+    let findIdPhone = $('#findIdPhone');
+    let check_email = false;
+    let check_phone = false;
+
+    findIdEmail.keyup(() => {
+        console.log('findIdEmail:');
+        console.log(findIdEmail.val());
+        if(findIdEmail.val().length == 0) {
+            check_email = false;
+        } else {
+            check_email = true;
+        }
+    });
+
+    findIdPhone.keyup(() => {
+        console.log('findIdPhone:');
+        console.log(findIdPhone.val());
+        if(findIdPhone.val().length == 0) {
+            check_phone = false;
+        } else {
+            check_phone = true;
+        }
+    });
+
+    console.log('findIdPhone:');
+    console.log(findIdPhone.val());
+
+    $('#submitForm').click(()=>{
+        if(!check_email) {
+            alert('이메일을 확인해주세요');
+        } else if(!check_phone) {
+            alert('연락처를 확인해주세요');
+        } else {
+            $.ajax({
+                url:"mIdFindAjax",
+                type:"POST",
+                data:{
+                    "findIdEmail" : findIdEmail.val(),
+                    "findIdPhone" : findIdPhone.val()},
+                dataType:"text",
+                success:function(result) {
+                    console.log(`result = `, result);
+                    if(result.length != 0) {
+                        mIdFindForm.submit();
+                    } else {
+                        alert('조회된 회원이 없습니다. 다시 입력해주세요');
+                        findIdEmail.empty();
+                        findIdPhone.empty();
+                    }
+                },
+                error:function(){
+                    alert('mIdFindAjax 함수 통신 실패');
+                }
+            });
+        }
+    });
+</script>
+
+</html>

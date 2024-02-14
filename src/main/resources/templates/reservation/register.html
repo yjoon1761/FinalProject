@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/fullcalendar/dist/index.global.js"></script>
+    <script src="/fullcalendar/packages/google-calendar/index.global.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/32dee6c2b4.js" crossorigin="anonymous"></script>
+    <script type="text/javascript"
+            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=15ffb8c8f33d74e2af502a07e2ef6128&libraries=services"></script>
+    <script src="/js/page.js"></script>
+
+    <title>병원찾기</title>
+    <script>
+        // 캘린더 관련
+        let dateList = [];
+        let date = new Date();
+        let year = String(date.getFullYear());
+        let month = String(date.getMonth() + 1).padStart(2, '0');
+        let nowDate = String(date.getDate()).padStart(2, '0');
+        let today = year + month + nowDate;
+        let todayStr = year + '-' + month + '-' + nowDate;
+        let todayNum = Number(today);
+        let reservationList;
+        let selectedEvent = '';
+        let check1 = false;
+        let check2 = false;
+
+        document.addEventListener('DOMContentLoaded', function () {  // 페이지 로드시 실행되는 함수
+            $(() => {
+                $.ajax({
+                    url: "sReady",
+                    type: "POST",
+                    data: {"comNo": [[${comNo}]]},
+                    dataType: 'text',
+                    success: function (list) {
+                        let eventList = JSON.parse(list);
+                        for (let i = 0; i < eventList.length; i++) {
+                            let splitDate = eventList[i]["splitDate"];
+                            if (splitDate > todayNum) {
+                                eventList[i].display = 'background';
+                                calendar.addEvent(eventList[i]);
+                            }
+                        }
+                    },
+                    error: function () {
+                        alert('sReady 함수 통신 실패');
+                    }
+                });
+                $.ajax({
+                    url: "rReady",
+                    type: "POST",
+                    data: {"comNo": [[${comNo}]]},
+                    dataType: 'text',
+                    success: function (list) {
+                        reservationList = JSON.parse(list);
+                        console.log(reservationList);
+
+                        // key값 : Object.keys(객체)[i]
+                        // 크기 : Object.keys(객체).length
+                        for (let i = 0; i < Object.keys(reservationList[0]).length; i++) {
+                            let keys = Object.keys(reservationList[0])[i];
+                            let arrLength = reservationList[0][keys].length;
+                            if (arrLength === 11) {
+                                calendar.addEvent({
+                                    title: '예약마감',
+                                    start: keys,
+                                    end: keys,
+                                    overlap: false,
+                                    display: 'background',
+                                    backgroundColor: 'orange'
+                                });
+                            }
+                        }
+                    },
+                    error: function () {
+                        alert('rReady 함수 통신 실패');
+                    }
+                });
+                calendar.addEvent({
+                    start: '2024-01-01',
+                    end: todayStr,
+                    overlap: false,
+                    display: 'background',
+                    backgroundColor: 'lightgray'
+                });
+            });
+            var calendarEl = document.getElementById('calendar'); // body 태그의 <div id='calendar'> 자체를 변수 calendarEI에 대입
+            var calendar = new FullCalendar.Calendar(calendarEl, {  // <div id='calendar'> 태그에 추가할 설정을 변수 calendar를 통해 대입
+                timeZone: 'local',
+                locale: 'kr',
+                // initialDate: '2024-01-01',
+                navLinks: false,   // can click day/week names to navigate views
+                selectable: true, // 선택 및 드래그로 다중 선택 가능
+                selectMirror: false,
+                weekends: true, // 주말 표시
+                googleCalendarApiKey: 'AIzaSyCSLh61abmvs-sBDsMgEOGSqiO-KBeVZSc',
+                eventSources: [
+                    {
+                        googleCalendarId: 'bw02203@naver.com',
+                    },
+                    {
+                        googleCalendarId: 'ko.south_korea.official#holiday@group.v.calendar.google.com',
+                        backgroundColor: '#dc143c',
+                        display: 'background'
+                    }
+                    // 이벤트 추가
+                    // events: [
+                    //   {
+                    //     // title: 'Click for Google',
+                    //     // url: 'http://google.com/',
+                    //     start: '2023-01-28',
+                    //     end: '2023-01-28',
+                    //     allDay: true
+                    //   }
+                    // ]
+                ],
+                // customButtons: {
+                //     indexBtn: {
+                //         text: 'Index',
+                //         click: function () {
+                //             location.href = '/';
+                //         }
+                //     },
+                //     saveBtn: {      // ################## 여기 수정 필요 ##################
+                //         text: 'Save',
+                //         click: function () {
+                //             if (confirm('일정을 업데이트 하시겠습니까?')) {
+                //                 dateList = [];
+                //                 for (let i = 0; i < calendar.getEvents().length; i++) {
+                //                     if ((calendar.getEvents(0)[i]["url"]).length === 0 && calendar.getEvents(0)[i]["title"] !== '예약마감') {
+                //                         let myDate = calendar.getEvents(0)[i]["startStr"];
+                //                         dateList.push(myDate);
+                //                     }
+                //                 }
+                //                 console.log(dateList);
+                //                 $.ajax({
+                //                     url: "sRegister",
+                //                     type: "POST",
+                //                     contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                //                     traditional: true, // ajax 배열 넘기기 옵션
+                //                     data: {
+                //                         "dateList": dateList,
+                //                         "comNo": [[${comNo}]]
+                //                     },
+                //                     dateType: 'JSON',
+                //                     success: function (result) {
+                //                         console.log(result);
+                //                     },
+                //                     error: function () {
+                //                         alert('sRegister 함수 통신 실패!');
+                //                     }
+                //                 });
+                //             }
+                //         }
+                //     }
+                // },
+                headerToolbar: {  // 헤더부분에 나타나는 메뉴
+                    left: 'prev,next',  // prev,next : 월(month) 이동 버튼
+                    center: 'title',    // 캘린더 제목
+                    right: 'today'      // today : 오늘 날짜로 이동
+                },
+                // 날짜 선택 시 호출되는 함수
+
+                select: function (arg) {
+                    check1 = false;
+                    let timeArr = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
+                    let times = reservationList[0][arg.startStr];
+
+                    if (JSON.stringify(times) !== undefined) {
+                        for (let i = 0; i < times.length; i++) {
+                            for (let j = 0; j < timeArr.length; j++) {
+                                if (times[i] === timeArr[j]) {
+                                    // 이미 예약된 시간이라면 timeArr에서 삭제
+                                    timeArr.splice(j, 1);
+                                }
+                            }
+                        }
+                    }
+                    let selectedDate = arg.startStr;
+                    let arr = arg.startStr.split('-');
+                    let selectedDateNum = '';
+
+                    for (let i = 0; i < arr.length; i++) {
+                        selectedDateNum += arr[i];
+                    }
+
+                    for (let i = 0; i < calendar.getEvents().length; i++) {
+                        if (arg.startStr === calendar.getEvents(0)[i]["startStr"] && calendar.getEvents(0)[i]["display"].length !== 0) {
+                            // 휴무일 혹은 공휴일 선택 여부를 위한 check1
+                            console.log(calendar.getEvents(0)[i]["startStr"]);
+                            console.log(arg.startStr);
+                            check1 = true;
+                        }
+                    }
+                    console.log(todayNum);
+                    console.log(check1, check2);
+
+                    // 예약일정 등록
+                    if (selectedDateNum > todayNum && !check1 && !check2) {
+                        output = `
+                            <table>
+                                <h4>예약 시간</h4>
+                        `;
+                        for (let i = 0; i < timeArr.length; i++) {
+                            indexNum = i;
+                            output += `
+                                <tr>
+                                    <td><span id="time${indexNum}" class="modalTime">${timeArr[i]}</span></td>
+                                </tr>
+                            `;
+                        }
+                        output += `
+                            </table>
+                        `;
+                        modalContent.html(output);
+                        modal.show();
+
+                        // 시간대 클릭하면
+                        $('.modalTime').click(function () {
+                            let check_id = $(this).attr('id');
+                            console.log(check_id);
+                            selectedTime = $(`#${check_id}`).html();
+                            console.log(selectedTime);
+                            console.log('button clicked');
+                            // modal.hide();
+                            $('body').css('overflow', 'auto');
+
+                            // 시간 클릭 전이라면
+                            if(selectedEvent.length === 0) {
+                                calendar.addEvent({
+                                    id: 'selectedTime',
+                                    title: `${selectedTime} 예약`,
+                                    start: arg.start,
+                                    end: arg.end,
+                                    allDay: arg.allDay,
+                                    backgroundColor: 'sandybrown'
+                                });
+                                $('#resDate').html(selectedDate);
+                                $('#resTime').html(selectedTime);
+                            } else {    // 선택된 시간이 있으면 삭제 후 등록
+                                selectedEvent.remove();
+                                calendar.addEvent({
+                                    id: 'selectedTime',
+                                    title: `${selectedTime} 예약`,
+                                    start: arg.start,
+                                    end: arg.end,
+                                    allDay: arg.allDay,
+                                    backgroundColor: 'sandybrown'
+                                });
+                                $('#resDate').html(selectedDate);
+                                $('#resTime').html(selectedTime);
+                            }
+                            // 예약 일정을 등록했는지 여부를 위한 check2
+                            check2 = true;
+                            // 시간 선택 여부를 위한 selectedEvent
+                            selectedEvent = calendar.getEventById('selectedTime');
+                        });
+                    } else if (selectedDateNum <= todayNum) {
+                        alert('오늘을 포함해 이미 지난 날짜는 선택할 수 없습니다');
+                        // modal.hide();
+                    } else if (check1) {
+                        alert('선택할 수 없는 날짜입니다.');
+                        // modal.hide();
+                    } else if (selectedDateNum > todayNum && check2) {
+                        alert('이미 등록된 일정이 있습니다! 삭제 후 진행해주세요');
+                        // modal.hide();
+                    }
+                },
+                eventClick: function (arg) {
+                    if (arg.event.url.length === 0) {
+                        if (confirm('등록된 일정을 삭제하시겠습니까?')) {
+                            arg.event.remove();
+                            console.log('dateList:', dateList);
+                            check2 = false;
+                            window.location.reload();
+                        }
+                    }
+                },
+                dateClick: function (arg) {
+                },
+                editable: true,
+                dayMaxEvents: true // allow "more" link when too many events
+            });
+            calendar.render();
+        });
+    </script>
+    <style>
+        #reserve-section {
+            width: 1282px;
+            margin: auto;
+        }
+
+        #calendar {
+            width: 500px;
+        }
+
+        #calendar, #modal, #summary-area {
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        #modal {
+            text-align: center;
+            line-height: 60px;
+            position: relative;
+            z-index: 1;
+            width: 270px;
+            height: 550px;
+            overflow: auto;
+            background-color: rgba(250, 244, 192, 0);
+        }
+
+        #modal::-webkit-scrollbar {
+            width: 10px;
+        }
+        #modal::-webkit-scrollbar-thumb {
+            background-color: sandybrown;
+            border-radius: 10px;
+        }
+        #modal::-webkit-scrollbar-track {
+            background-color: rgba(250, 244, 192, 0.5);
+            border-radius: 10px;
+            box-shadow: inset 0 0 5px white;
+        }
+
+        .modalTime {
+            color: #aaa;
+            font-size: 35px;
+            font-weight: bold;
+            padding-left: 80px;
+        }
+
+        .modalTime:hover,
+        .modalTime:focus {
+            color: black;
+            text-decoration: none;
+        }
+
+        .fc .fc-toolbar-title {
+            font-size: 50px;
+            transform: translateX(-14px);
+            color: brown;
+        }
+
+        #summary-area textarea:hover{
+            outline: 0;
+        }
+
+        .rRegi_btn input {
+            width: 100px;
+            height: 70%;
+            background-color: sandybrown;
+            border-radius: 4px;
+        }
+        .reser_title {
+            text-align: center;
+            color: brown;
+        }
+    </style>
+</head>
+<body>
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+<section id="content">
+    <form action="/rRegister" method="POST" enctype="multipart/form-data" name="rRegiForm">
+        <div id="reserve-section">
+            <div id='calendar'>
+            </div>
+            <div id="modal">
+                <div id="modalContent" class="modalContent"></div>
+            </div>
+            <div id="summary-area" style="text-align: center; width: 500px; height: 500px; transform: translateX(85px);">
+                <div id="summary1">
+                    <div style="margin-bottom: 30px;"><h2 style="color: brown;">▶예약정보확인</h2></div>
+                    <div class="reserve-info" style="height: 20px; margin-bottom: 20px">
+                        예약시간 : <span id="resDate" style="font-size: 25px;"></span>
+                        예약날짜 : <span id="resTime" style="font-size: 25px;"></span>
+                    </div>
+                </div>
+                <div id="summary2" style="margin-bottom: 10px;">
+                    <div style="display: inline-block;">
+                        <select id="resPurpose" name="resPurpose" style="width: 125px; height: 25px; transform: translateX(-40px);">
+                            <option value="진료">진료</option>
+                            <option value="수술">수술</option>
+                            <option value="입원">입원</option>
+                        </select>
+                    </div>
+                    <div style="display: inline-block;">
+                        <select id="petNo" name="pNo" style="width: 125px; height: 25px; transform: translateX(40px);">
+                        </select>
+                    </div>
+                </div>
+                <div id="summary4">
+                    <div>
+                        <textarea style="height: 300px; width: 360px;" id="resContent" name="resContent"
+                                  placeholder="기타 증상을 간략히 적어주세요"></textarea>
+                    </div>
+                </div>
+                <div class="rRegi_btn">
+                    <input type="button" value="예약하기" id="submitForm" style="width: 100px; height: 30px; transform: translateX(-30px);"/>
+                    <input type="button" value="다시작성" id="resetBtn" style="width: 100px; height: 30px; transform: translateX(30px);"/>
+                </div>
+                <div id="hiddens">
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+</body>
+</html>
+<script>
+    // modal 관련
+    let modal = $('#modal');
+    let modalContent = $('#modalContent');
+    let output = '';
+    let indexNum;
+    let selectedTime;
+
+    // 펫 목록 불러오기
+    let list = [];
+    $.ajax({
+        url: '/pList',
+        type: 'post',
+        dataType: 'json',
+        success: function (result) {
+            console.log(result);
+            list = result;
+            let output = '';
+            for (let i = 0; i < list.length; i++) {
+                output += `
+                    <option value=${list[i].pno}>${list[i].pname}</option>
+           `;
+            }
+            $('#petNo').html(output);
+        },
+        error: function () {
+            alert('pList 함수 호출 실패');
+        }
+    });
+
+    // reset
+    $('#resetBtn').click(() => {
+        window.location.reload();
+    });
+
+    // submit
+    console.log('comNo:');
+    console.log([[${comNo}]]);
+    let resDate;
+    let resTime;
+    let hiddens = $('#hiddens');
+    $('#submitForm').click(() => {
+        resDate = $('#resDate').html();
+        resTime = $('#resTime').html();
+        let output = `
+            <input type="hidden" id="resDate" name="resDate" value=${resDate}>
+            <input type="hidden" id="resTime" name="resTime" value=${resTime}>
+            <input type="hidden" id="comNo" name="comNo" value=[[${comNo}]]>
+        `;
+        hiddens.html(output);
+        rRegiForm.submit();
+    });
+
+</script>

@@ -1,0 +1,61 @@
+.mview-table {
+    width: 700px;
+    text-align: center;
+    margin: auto;
+}
+
+.mview-table, .mview-table tr, .mview-table td, .mview-table th{
+    border: 3px solid sandybrown;
+    border-collapse: collapse;
+    height: 50px;
+}
+
+.mview-section:nth-child(odd) {
+    background-color: #faf4c0;
+}
+
+.mview-button button, .mview-button input{
+    width: 100px;
+    height: 70%;
+    background-color: sandybrown;
+    border-radius: 4px;
+}
+
+.mview-title h1 {
+    text-align: center;
+    color: brown;
+    padding-top: 20px;
+    margin-bottom: 20px;
+    font-size: 30px;
+}
+
+.cview-table {
+    width: 700px;
+    text-align: center;
+    margin: auto;
+}
+
+.cview-table, .cview-table tr, .cview-table td, .cview-table th{
+    border: 3px solid sandybrown;
+    border-collapse: collapse;
+    height: 50px;
+}
+
+.cview-section:nth-child(odd) {
+    background-color: #faf4c0;
+}
+
+.cview-button button, .cview-button input{
+    width: 100px;
+    height: 70%;
+    background-color: sandybrown;
+    border-radius: 4px;
+}
+
+.cview-title h1 {
+    text-align: center;
+    color: brown;
+    padding-top: 20px;
+    margin-bottom: 20px;
+    font-size: 30px;
+}

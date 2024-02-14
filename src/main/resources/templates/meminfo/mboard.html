@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/member.css">
+    <link rel="stylesheet" href="/css/myinfo.css">
+    <link rel="stylesheet" href="/css/board.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="/js/page.js"></script>
+    <script src="/js/view.js"></script>
+    <script src="/js/company.js"></script>
+    <script src="/js/cancel.js"></script>
+
+
+    <title>[[${session.loginnickname}]]님의 정보보기</title>
+</head>
+
+<body>
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+<section id="contentview">
+    <div class="myinfo-side-menu">
+        <ul th:if="${session.loginNo != -1 && session.comNo == -1 && session.loginmId != 'admin'}">
+            <a th:onclick="'mView(' + ${session.loginNo} + ')'" ><li>내정보</li></a>
+            <a onclick="pListForm()" ><li>마이펫</li></a>
+            <a th:onclick="'mRes(' + ${session.loginNo} + ')'"><li>예약 내역</li></a>
+            <a th:onclick="'mBoard(' + ${session.loginNo} + ')'"> <li>내가 쓴 게시물</li></a>
+            <a th:onclick="'mCard(' + ${session.loginNo} + ')'"><li>나의 카드</li></a>
+            <a th:onclick="'mCancel(' + ${session.loginNo} + ')'"><li>회원탈퇴</li></a>
+        </ul>
+        <ul th:if="${session.loginNo == -1 && session.comNo != -1 && session.loginmId != 'admin'}">
+            <a th:onclick="'cView(' + ${session.comNo} + ')'" ><li>내정보</li></a>
+            <a th:onclick="'mBoard(' + ${session.comNo} + ')'"> <li>내가 쓴 게시물</li></a>
+            <a th:onclick="'cCancel(' + ${session.comNo} + ')'"><li>회원탈퇴</li></a>
+        </ul>
+
+        <ul th:if="${session.loginmId == 'admin'}">
+            <a th:onclick="'mView(' + ${session.loginNo} + ')'" ><li>내정보</li></a>
+            <a href="/mListForm"><li>회원목록</li></a>
+            <a href="/cListForm"><li>기업목록</li></a>
+            <a th:onclick="'mBoard(' + ${session.loginNo} + ')'"> <li>내가 쓴 게시물</li></a>
+        </ul>
+    </div>
+
+    <div class="myinfo-main">
+        <div id="info">
+            <article class="board-content">
+                <div id="board-title">
+                    <h1 >내가 쓴 게시물 목록</h1>
+                </div>
+
+                <div class="board-foot">
+                    <div id="mybList"></div>
+                    <div class="numbering" id="numbering"></div>
+                </div>
+
+            </article>
+        </div>
+    </div>
+</section>
+
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+
+    let page = 1;       // 목록의 페이지 번호 (시작페이지 1)
+    let limit = 5;      // 한 페이지에 출력될 목록의 개수
+    const block = 5;    // 한 페이지에 출력될 번호의 개수
+    let count = 0;      // 목록의 총 개수
+    let list = [];      // 목록을 담기 위한 배열
+    let MNO = 0;
+    let CNO = 0;
+
+
+    if([[${session.comNo}]] === -1) {
+        MNO = [[${session.loginNo}]];
+    } else if([[${session.loginNo}]] === -1){
+        CNO = [[${session.comNo}]]
+    }
+    console.log(MNO);
+    console.log(CNO);
+
+    if(CNO === 0) {
+        $(() => {
+            $.ajax({
+                url: "/membList",
+                type: "post",
+                data: {
+                    "MNO": MNO
+                },
+                dataType: "json",
+                success: function (result) {
+                    console.log(result);
+                    list = result;
+                    pagingList(page, list);
+                    console.log(list);
+                },
+                error: function () {
+                    alert('membList함수 호출 실패!');
+                }
+            });
+        });
+    }else{
+        $(() => {
+            $.ajax({
+                url: "/mybListc",
+                type: "post",
+                data: {
+                    "comNo": CNO
+                },
+                dataType: "json",
+                success: function (result) {
+                    console.log(result);
+                    list = result;
+                    pagingList(page, list);
+                    console.log(list);
+                },
+                error: function () {
+                    alert('mybList함수 호출 실패!');
+                }
+            });
+        });
+    }
+
+    // 회원목록 개수 변경
+    // id="limit"의 값이 바뀔때
+    $('#limit').change(()=>{
+        page = 1;
+        limit = Number($('#limit').val());
+        pagingList(page, list);
+    });
+
+    // 검색한 목록 출력
+    $('#btnSearch').click(()=>{
+        let category = $('#category').val();
+        let keyword = $('#keyword').val();
+
+        $.ajax({
+            url : "bSearchList",
+            type : "post",
+            data : {
+                "category" : category,
+                "keyword" : keyword
+            },
+            dataType : "json",
+            success : function(result){
+                console.log(result);
+                list = result;
+                pagingList(page, list);
+            },
+            error : function (){
+                alert('bSearchList함수 호출 실패!');
+            }
+        });
+    });
+
+
+    // 리스트 출력 함수
+    function pagingList(page, list){
+        count = list.length;
+
+        console.log(`page# : ${page}` );
+        console.log(`count# : ${count}` );
+
+        let maxPage = Math.ceil(count/limit);
+
+        if(page > maxPage){
+            if(maxPage==0){
+                maxPage = 1;
+            }
+
+            page = maxPage;
+        }
+
+        let startRow = (page - 1) * limit;
+        let endRow = page * limit - 1;
+
+        if(endRow >= count){
+            endRow = count-1;
+        }
+
+        let startPage = ((Math.ceil(page/block))-1) * block + 1;
+        let endPage = startPage + block - 1;
+
+        if(endPage > maxPage){
+            endPage = maxPage;
+        }
+
+        output = ``;
+
+        output += `<div id="board-list">
+                <div class="board-container">
+                <table class="board-table">
+                    <thead>
+                    <th class="th-no">게시판</th>
+                        <th class="th-title">제목</th>
+                        <th class="th-date">작성자</th>
+                        <th class="th-date">작성일</th>
+                        <th class="th-hit">조회수</th>
+                    </thead>
+                <tbody>`;
+
+        for(let i=startRow; i<=endRow; i++){
+            output += `
+                <tr>
+                    <td>${list[i].category.catName}</td>
+                    <td><a href="/bView/${list[i].bno}">${list[i].btitle}</a></td>`
+
+            if (list[i].member.mno===-1 && list[i].company.comNo!==-1){
+                output += `<td>${list[i].company.cname}</td>`;
+            }else if (list[i].company.comNo===-1 && list[i].member.mno!==-1){
+                output += `<td>${list[i].member.nickName}</td>`;
+            }
+
+            output += `<td>${list[i].bdate.substring(0, 10)}</td>
+                    <td>${list[i].bhit}</td>
+                </tr>
+            `;
+        }
+
+        output += `</tbody>
+                        </table>
+                         </div>
+                        </div>`;
+
+
+        $('#mybList').html(output);
+
+        let pageNums = [];
+        let prev = (page-1 < 1 ? 1 : page-1);
+        let next = (page+1 >= maxPage ? maxPage : page+1)
+
+        // [이전]
+        if(page<=1){
+            pageNums.push(` < `);
+        } else {
+            pageNums.push(`<a class="page-prev" href="#" data-page=${prev}> < </a>`);
+        }
+
+        // [페이지번호]
+        for(let i=startPage; i<=endPage; i++){
+            if(page==i){
+                pageNums.push(` ${i} `);
+
+            } else {
+                pageNums.push(`<a class="iNum" href="#" data-page=${i}> ${i} </a>`);
+            }
+        }
+
+        // [다음]
+        if(page>=maxPage){
+            pageNums.push(` > `);
+        } else {
+            pageNums.push(`<a class="page-next" href="#" data-page=${next}> > </a>`);
+        }
+
+        $('#numbering').html(pageNums);
+
+        // [이전], [페이지번호], [다음]을 클릭시
+        $('#numbering a').click(function(e){
+            page = parseInt($(this).data('page'));
+            console.log(`click page# : ${page}`);
+
+            pagingList(page, list);
+        });
+
+    }
+</script>
+
+</html>

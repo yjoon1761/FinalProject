@@ -1,0 +1,532 @@
+body{
+    background-color: whitesmoke;
+    margin: 0px;
+}
+
+/* 기업 사이드 바*/
+.sidebar {
+    display: inline-block;
+    height: 765px;
+}
+
+.left_sub_menu {
+    width: 220px;
+    z-index: 10;
+    background: navy;
+    height: 100%;
+    /*position: fixed;*/
+
+}
+
+.sub_menu {
+    margin-top: 50px;
+}
+
+.left_sub_menu > .sub_menu li:hover {
+    color: #000000;
+    background-color: #e1e1e1;
+}
+
+.left_sub_menu > .sub_menu li {
+    color: white;
+    font-weight: 600;
+    padding: 20px;
+    text-align: center;
+}
+
+.sub_menu > h2 {
+    padding-bottom: 4px;
+    border-bottom: 3px solid #797979;
+    margin-top: 30px;
+    font-size: 21px;
+    font-weight: 600;
+    color: #333;
+    margin-left: 10px;
+    margin-right: 10px;
+    font-family: 'NotoKrB', serif;
+    line-height: 35px;
+}
+
+.sub_menu > .big_menu > .small_menu li {
+    color: #000000;
+    font-size: 14px;
+    font-weight: 600;
+    border-bottom: 0px solid #e1e1e1;
+    margin-left: 14px;
+    padding-top: 8px;
+}
+
+.small_menu li {
+    font-size: 16px;
+}
+
+.small_menu a:hover {
+    color: #000000;
+    background-color: #e1e1e1;
+}
+
+.big_menu {
+    font-size: 21px;
+}
+
+ul {
+    padding-inline-start: 0;
+}
+
+a {
+    text-decoration: none;
+    background-color: transparent;
+}
+
+ul {
+    list-style: none;
+}
+
+ol,
+ul {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.hide_sidemenu {
+    display: none;
+}
+
+/* END 기업 사이드 바*/
+
+/*기업 페이지 차트작성 */
+.recview-big{
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.recview-table{
+    border: 3px solid #2525c4;
+    border-collapse: collapse;
+    text-align: center;
+    height: 700px;
+    width: 850px;
+    margin-left: 10px;
+}
+
+.recview-table tr, .recview-table td, .recview-table th{
+    border: 3px solid #2525c4;
+    border-collapse: collapse;
+}
+#resList{
+
+    border-collapse: collapse;
+    width: 310px;
+    text-align: center;
+    margin: 20px 30px;
+}
+.relist, .relist tr, .relist th, .relist td{
+    text-align: center;
+    margin: 20px 0px 0px 40px;
+    border: 3px solid #2525c4;
+    border-collapse: collapse;
+    width: 231px;
+    font-size: small;
+
+}
+#listbtn{
+    border: 3px double;
+    border-radius: 10px;
+    background-color: #D94C1A;
+    margin-left: 50px;
+}
+
+#submit{
+    width: 70px;
+    height: 30px;
+}
+.rContent{
+    width: 98%;
+    height: 38.25em;
+    border: none;
+    resize: none;
+    background: whitesmoke;
+}
+.rtext{
+    height: 519px;
+    width: 718px;
+}
+
+.relist{
+    vertical-align: top;
+}
+
+
+
+/*기업 페이지 차트 목록*/
+.clist-line{
+    height: 1px;
+    background-color: rgba(0, 34, 203, 0.95);
+    border: 0px;
+    margin-left: 0px;
+    width: 1150px;
+}
+.cmain-title1{
+    text-align: center;
+    color: #2525c4;
+    font-size: 25px;
+}
+
+.clist-section{
+    display: inline-block;
+    position: absolute;
+    /*margin-left: 10px;*/
+    width: 1150px;
+    margin: 10px 0px 0px 20px;
+    height: 700px;
+}
+.clist-table, .clist-table tr, .clist-table td, .clist-table th{
+    margin-top: 10px;
+    border: 1px solid #2525c4;
+    border-collapse: collapse;
+    width: 1150px;
+    text-align: center;
+}
+
+/*기업 차트 상세보기*/
+.cmain-title2{
+    text-align: center;
+    color: #2525c4;
+    font-size: 25px;
+}
+.recview-big1{
+    display: inline-block;
+    position: absolute;
+    margin-left: 230px;
+    margin-top: 10px;
+}
+
+.recview-table1{
+    border: 3px solid #2525c4;
+    border-collapse: collapse;
+    text-align: center;
+    height: 700px;
+    width: 850px;
+
+}
+
+.recview-table1 tr, .recview-table1 td, .recview-table1 th{
+    border: 3px solid #2525c4;
+    border-collapse: collapse;
+}
+
+
+
+
+/* 기업 예약&메인 페이지*/
+.res_section{
+    display: inline-block;
+    position: absolute;
+    margin-left: 10px;
+}
+
+.header_line{
+    height: 1px;
+    background-color: rgba(0, 34, 203, 0.95);
+    border: 0px;
+}
+
+.cmain-title{
+    text-align: center;
+    color: #2525c4;
+    font-size: 25px;
+}
+
+.main-table, .main-table tr, .main-table td, .main-table th{
+    margin-top: 10px;
+    border: 1px solid #2525c4;
+    border-collapse: collapse;
+    width: 1150px;
+}
+
+#resList tr{
+    height: 40px;
+    font-size: 20px;
+    text-align: center;
+}
+
+/* 담당의 등록 & 수정 */
+
+#dRegi-content {
+    display: inline-block;
+    position: absolute;
+    vertical-align: top;
+    width: 1100px;
+    margin-left: 50px;
+}
+
+/*#dRegi-content h1 {*/
+/*    transform: translateY(-15px);*/
+/*    text-align: center;*/
+/*    color: slateblue;*/
+/*    font-size: 50px;*/
+/*}*/
+
+.dRegi-table {
+    margin-left: 50px;
+    margin-top: 100px;
+    border-radius: 15px;
+    background: #fff;
+    padding: 20px 30px;
+    width: 1000px;
+    line-height: 70px;
+    transform: translateY(-45px);
+}
+
+.dRegi-table input[type="text"] {
+    width: 99%;
+    height: 30px;
+    border: 0;
+    border-bottom: 3px solid #adadad;
+    font-size: 20px;
+}
+
+.dRegi-table input[type="text"]:focus, .dRegi-table textarea:focus {
+    outline: 0;
+}
+
+.dRegi-table textarea {
+    border: 3px solid #adadad;
+    width: 99%;
+    height: 200px;
+    line-height: 40px;
+    font-size: 20px;
+}
+
+.dRegi-table .filebox .upload-name {
+    width: 74%;
+    height: 40px;
+    padding: 0 10px;
+    vertical-align: middle;
+    border: 3px solid #adadad;
+    border-radius: 20px;
+    color: #999999;
+}
+
+.upload-name:active {
+    outline: 0;
+}
+
+.dRegi-table .filebox label {
+    padding: 10px 20px;
+    color: #fff;
+    vertical-align: middle;
+    background-color: #999999;
+    height: 20px;
+    margin-left: 10px;
+}
+
+.dRegi-table .filebox input[type="file"] {
+    position: absolute;
+    width: 0;
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+}
+
+.dRegi-table input[type="submit"], .dRegi-table input[type="reset"] {
+    width: 100px;
+    height: 40px;
+    background: whitesmoke;
+    border-radius: 4px;
+    border: 3px solid #adadad;
+}
+
+/* 담당의 등록 & 수정 끝 */
+
+/* 담당의 목록*/
+
+.dList-section {
+    vertical-align: top;
+    position: absolute;
+    display: inline-block;
+    width: 1100px;
+    margin-left: 50px;
+}
+
+.dList h1, .dList-table {
+    transform: translateY(25px);
+}
+
+.dList-table {
+    width: 100%;
+    border-collapse: collapse;
+
+}
+
+.dList-table th {
+    border-bottom: 3px solid slateblue;
+}
+
+.dList-table td {
+    border-bottom: 3px solid slateblue;
+}
+
+
+.dList-table img {
+    width: 150px;
+}
+
+.dList-search select {
+    height: 40px;
+}
+
+.dList-search input[type="text"] {
+    height: 37px;
+    width: 250px;
+}
+
+.dList-search button {
+    height: 40px;
+    width: 40px;
+}
+
+.dList-table a, .dList-table a:visited, .dList-table a:active {
+    color: black;
+}
+
+.dList-section #numbering {
+    text-align: center;
+    transform: translateY(25px);
+    color: black;
+}
+
+/* 담당의 목록 끝*/
+
+/* 담당의 상세보기*/
+.doc_position {
+    border: 1px solid slateblue;
+    width: 300px;
+    text-align: center;
+}
+
+.doc_info {
+    margin-left: 210px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.doc_info h1 {
+    display: contents;
+}
+
+.doc_info, .doc_profile {
+    margin-top: 100px;
+}
+
+.content-title {
+    background-color: slateblue;
+    height: 30px;
+    width: 251px;
+    line-height: 30px;
+    text-align: center;
+    color: white;
+}
+
+.doc_contents {
+    border: 1px solid slateblue;
+    width: 480px;
+    height: 500px;
+    overflow: scroll;
+    padding-left: 20px;
+    line-height: 40px;
+}
+
+.doc_contents::-webkit-scrollbar {
+    width: 10px;
+}
+.doc_contents::-webkit-scrollbar-thumb {
+    background-color: slateblue;
+    border-radius: 10px;
+}
+.doc_contents::-webkit-scrollbar-track {
+    background-color: whitesmoke;
+    border-radius: 10px;
+    box-shadow: inset 0 0 5px whitesmoke;
+}
+
+.doc_contents h3 {
+    white-space: pre-line;
+}
+
+.doc_profile {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.doc_profile img {
+    width: 400px;
+}
+
+.doc_btn button {
+    width: 100px;
+    height: 50px;
+    background: whitesmoke;
+    border-radius: 4px;
+    border: 3px solid #adadad;
+    margin: 48px;
+    transform: translateY(-30px);
+}
+
+/* 담당의 상세보기 끝*/
+
+/* 휴일관리 */
+
+#calendar {
+    width: 770px;
+    margin-left: 150px;
+    vertical-align: top;
+    position: absolute;
+    display: inline-block;
+}
+
+#calendar a {
+    color: black;
+}
+
+.fc .fc-toolbar-title {
+    font-size: 50px;
+    transform: translateX(-92px);
+}
+
+button.fc-saveBtn-button.fc-button.fc-button-primary{
+    width: 150px;
+    transform: translate(200px, 650px);
+}
+
+.calendar-section{
+    width: 1100px;
+    display: inline-block;
+    position: absolute;
+    margin-left: 10px;
+}
+
+.calendar-title{
+    text-align: center;
+    color: #2525c4;
+    font-size: 25px;
+}
+
+.calendar-line{
+    height: 1px;
+    background-color: rgba(0, 34, 203, 0.95);
+    border: 0px;
+    margin-left: 0px;
+    width: 1150px;
+
+}
+/* 휴일관리 끝 */
+
+
+/* 넘버링 */
+.numbering, .page-prev, .iNum, .page-next{
+    font-size:20px;
+    margin-top: 50px;
+    text-align: center;
+}

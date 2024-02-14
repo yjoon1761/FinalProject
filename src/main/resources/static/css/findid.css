@@ -1,0 +1,33 @@
+#findid-title h1 {
+    text-align: center;
+    color: brown;
+    padding-top: 20px;
+    margin-bottom: 20px;
+    font-size: 30px;
+}
+
+.findid-container {
+    width: 500px;
+    margin: auto;
+    text-align: center;
+}
+
+.findid-area {
+    border: 3px dashed sandybrown;
+    border-radius: 4px;
+    height: 100px;
+    line-height: 100px;
+}
+
+.btn-findid input {
+    width: 160px;
+    height: 35px;
+    margin: 25px;
+    background-color: sandybrown;
+    border-radius: 40px;
+    border: 1px solid black;
+}
+
+.btn-findid {
+    transform: translateY(-10px);
+}

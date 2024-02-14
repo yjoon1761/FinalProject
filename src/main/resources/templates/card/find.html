@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title></title>
+</head>
+
+<body>
+<div id="userInfo">
+    <form action="/resRegister" method="POST">
+        <table>
+            <div>
+                <h1>예약정보확인</h1>
+            </div>
+
+            <tr>
+                <th>보호자</th>
+                <td></td>
+            </tr>
+
+            <tr>
+                <th>펫</th>
+                <td></td>
+            </tr>
+
+            <tr>
+                <th>나이</th>
+                <td></td>
+            </tr>
+
+            <tr>
+                <th>품종</th>
+                <td></td>
+            </tr>
+
+            <tr>
+                <th>사진</th>
+                <td></td>
+            </tr>
+
+            <tr>
+                <th>내원목적</th>
+                <td>
+                    <select name="resPurpose">
+                        <option value="수술">수술</option>
+                        <option value="입원">입원</option>
+                        <option value="진료">진료</option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <th>내용</th>
+                <td>
+                    <textarea cols="40" rows="20" name="resContent"></textarea>
+                </td>
+            </tr>
+
+            <tr>
+                <th colspan="2"><input type="button" value="접수"></th>
+            </tr>
+
+        </table>
+    </form>
+</div>
+
+<div>
+    <input type="text" placeholder="펫이름" id="keyword"/>
+    <input type="button" id="petSearch" value="검색">
+</div>
+
+<div id="petInfo"></div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script>
+    let keyVal;
+
+    $('#petSearch').click(()=>{
+        let keyword = $('#keyword').val();
+        $.ajax({
+            url : "/petSearch",
+            type : "post",
+            data : {
+                "keyword" : keyword
+            } ,
+            dataType : "json",
+            success : function (result){
+                console.log(result);
+                petInfo(result);
+            },
+            error : function (){
+                alert("memberSearch 함수 통신 실패");
+            }
+        });
+    });
+
+    function petInfo(list){
+        let output = "";
+
+        for (let i in list){
+            output += "<li>";
+            output += `<a href="#" onclick="setInfo(${list[i].pno}, ${list[i].member.mno})">`;
+            output += `
+                <span>${list[i].pname}</span>&nbsp;<span>${list[i].member.mname}</span>&nbsp;<span>${list[i].member.maddr}</span>
+            `;
+            output += `</a></li>`;
+        }
+
+        $('#petInfo').html(output);
+    }
+
+    function setInfo(pNo, MNO){
+        $.ajax({
+            url : "/setInfo",
+            type : "post",
+            data : {
+                "pNo" : pNo,
+                "MNO" : MNO
+            } ,
+            dataType : "json",
+            success : function (result){
+                infoView(result);
+            },
+            error : function (){
+                alert("setInfo 함수 통신 실패");
+            }
+        });
+    }
+
+    function infoView(list){
+        let date = new Date();
+
+        let year = String(date.getFullYear());
+
+        let month = String(date.getMonth() + 1).padStart(2, "0");
+
+        let day = String(date.getDate()).padStart(2, "0");
+
+        let resDate = year + "-" + month + "-" + day;
+
+        let HH = String(date.getHours()).padStart(2, "0");
+
+        let mm = String(date.getMinutes()).padStart(2, "0");
+
+        let resTime = HH + ":" + mm;
+
+        let output = "";
+
+        output += `
+            <form action="/rRegister2" method="POST" name="submitForm">
+            <table>
+            <div>
+            <h1>예약정보확인</h1>
+            </div>
+
+            <tr>
+                <th>보호자</th>
+                <td>${list.member.mname}</td>
+            </tr>
+
+            <tr>
+                <th>펫</th>
+                <td>${list.pname}</td>
+            </tr>
+
+            <tr>
+                <th>나이</th>
+                <td>${list.pbirth}</td>
+            </tr>
+
+            <tr>
+                <th>품종</th>
+                <td>${list.pkind}</td>
+            </tr>
+
+            <tr>
+                <th>사진</th>
+                <td><img src="/profile/${list.pfileName}" width="150px"></td>
+            </tr>
+
+            <tr>
+                <th>내원목적</th>
+                <td>
+                    <select name="resPurpose">
+                        <option value="수술">수술</option>
+                        <option value="입원">입원</option>
+                        <option value="진료">진료</option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <th>내용</th>
+                <td>
+                    <textarea cols="40" rows="20" name="resContent"></textarea>
+                    <input type="hidden" name="pNo" value="${list.pno}">
+                    <input type="hidden" name="resDate" value="${resDate}">
+                    <input type="hidden" name="resTime" value="${resTime}">
+                </td>
+            </tr>
+
+            <tr>
+                <th colspan="2"><button id="submit">접수</button></th>
+            </tr>
+
+            </table>
+            </form>
+        `;
+
+        $('#userInfo').html(output);
+    }
+
+    $(function keyCheck() {
+        $.ajax({
+            url: '/keyCheck',
+            type: 'post',
+            dataType: 'text',
+            success: function(result) {
+                keyVal = result;
+                if (keyVal.length !== 0) {
+                    console.log(keyVal);
+                    userSelect();
+                }
+                setTimeout(keyCheck, 500);
+            },
+            error: function() {
+                alert('keyCheck 함수 통신 실패');
+            }
+        });
+    });
+
+    function userSelect(){
+        $.ajax({
+            url : "/userSelect",
+            type : "post",
+            data : {
+                "keyVal" : keyVal
+            },
+            dataType: "json",
+            success: function (result){
+                userView(result);
+            },
+            error: function (){
+                alert("userSelect 함수 통신 실패");
+            }
+        });
+    }
+
+    function userView(list){
+
+        let date = new Date();
+
+        let year = String(date.getFullYear());
+
+        let month = String(date.getMonth() + 1).padStart(2, "0");
+
+        let day = String(date.getDate()).padStart(2, "0");
+
+        let resDate = year + "-" + month + "-" + day;
+
+        let HH = String(date.getHours()).padStart(2, "0");
+
+        let mm = String(date.getMinutes()).padStart(2, "0");
+
+        let resTime = HH + ":" + mm;
+
+        let output = "";
+
+        output += `
+            <form action="/rRegister2" method="POST" name="submitForm">
+            <table>
+            <div>
+            <h1>예약정보확인</h1>
+            </div>
+
+            <tr>
+                <th>보호자</th>
+                <td>${list.pet.member.mname}</td>
+            </tr>
+
+            <tr>
+                <th>펫</th>
+                <td>${list.pet.pname}</td>
+            </tr>
+
+            <tr>
+                <th>나이</th>
+                <td>${list.pet.pbirth}</td>
+            </tr>
+
+            <tr>
+                <th>품종</th>
+                <td>${list.pet.pkind}</td>
+            </tr>
+
+            <tr>
+                <th>사진</th>
+                <td><img src="/profile/${list.pet.pfileName}" width="150px"></td>
+            </tr>
+
+            <tr>
+                <th>내원목적</th>
+                <td>
+                    <select name="resPurpose">
+                        <option value="수술">수술</option>
+                        <option value="입원">입원</option>
+                        <option value="진료">진료</option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <th>내용</th>
+                <td>
+                    <textarea cols="40" rows="20" name="resContent"></textarea>
+                    <input type="hidden" name="pNo" value="${list.pet.pno}">
+                    <input type="hidden" name="resDate" value="${resDate}">
+                    <input type="hidden" name="resTime" value="${resTime}">
+                </td>
+            </tr>
+
+            <tr>
+                <th colspan="2"><button id="submit">접수</button></th>
+            </tr>
+
+            </table>
+            </form>
+        `;
+
+        $('#userInfo').html(output);
+    }
+
+    $('#submit').click(()=>{
+        $('#submitForm').submit();
+    });
+
+</script>
+
+</html>

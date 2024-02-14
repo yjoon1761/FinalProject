@@ -1,0 +1,100 @@
+body{
+    background-color: whitesmoke;
+}
+
+.clogin-title{
+    text-align: center;
+    font-size: 40px;
+    font-weight: bold;
+    color: blue;
+}
+
+.clegend{
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.cloginfield{
+    height: 400px;
+    border: 3px solid blue;
+}
+
+.cloginform{
+    width: 400px;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.cfind{
+    position: absolute;
+    top: 71%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.cfind button{
+    font-size: 15px;
+    background-color: whitesmoke;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+
+.cback{
+    margin-top: 10px;
+    text-align: center;
+}
+
+.cback a{
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.cid{
+
+}
+
+.cid div, .cpw div{
+    font-weight: bold;
+    font-size: 25px;
+}
+
+
+.cpw input, .cid input{
+    font-size: 20px;
+    width: 350px;
+    height: 30px;
+}
+
+
+.cpw{
+
+}
+
+.csubmit{
+    width: 400px;
+    position: absolute;
+    bottom: 100px;
+    margin-left: 30px;
+}
+.csubmit input{
+    font-size: 25px;
+    font-weight: bold;
+    background-color: #ffffff;
+    color: #000000;
+    border: 2px solid blue;
+    margin: auto;
+    width: 300px;
+    height: 35px;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+/* 로그인 실패시 경고글 */
+.login_warn{
+    text-align: center;
+    color : red;
+}

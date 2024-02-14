@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/pet.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="/js/page.js"></script>
+
+    <title>펫 정보</title>
+</head>
+
+<body>
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+
+<section id="content">
+    <div id="pboard-title">
+        <h1>마이 펫</h1>
+    </div>
+
+    <div id="pList"></div>
+
+    <div class="numbering" id="numbering"></div>
+
+</section>
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+</body>
+
+<script th:src="@{http://code.jquery.com/jquery-latest.min.js}"></script>
+<script>
+    let page = 1;       // 목록의 페이지 번호 (시작페이지 1)
+    const block = 5;    // 한 페이지에 출력될 번호의 개수
+    const limit = 5;
+    let count = 0;      // 목록의 총 개수
+    let list = [];      // 목록을 담기 위한 배열
+
+    $(() => {
+        $.ajax({
+            url: "/pList",
+            type: "post",
+            dataType: "json",
+            success: function (result) {
+                console.log(result);
+                list = result;
+                pagingList(page, list);
+            },
+            error: function () {
+                alert('등록된 펫이 없습니다.');
+            }
+        });
+    });
+
+    // 리스트 출력 함수
+    function pagingList(page, list) {
+        count = list.length;    // 28
+        console.log(`page# : ${page}`);
+        console.log(`count# : ${count}`);
+
+        let maxPage = Math.ceil(count / limit);   //28/12 = 2
+
+        if (page > maxPage) {
+            if (maxPage === 0) {
+                maxPage = 1;
+            }
+
+            page = maxPage;
+        }
+
+        let startRow = (page - 1) * limit;  // 1-1 12 0
+        let endRow = page * limit - 1; // 1
+
+        if (endRow >= count) {
+            endRow = count - 1;
+        }
+
+        let startPage = ((Math.ceil(page / block)) - 1) * block + 1;
+        let endPage = startPage + block - 1;
+
+        if (endPage > maxPage) {
+            endPage = maxPage;
+        }
+
+        let output = '';
+
+        for (let i = startRow; i <= endRow; i++) {
+
+            output += `<article class="list-content">
+                  <div class="list-box"><a href="/pView/${list[i].pno}"><img src="/profile/${list[i].pfileName}" width="100%"/></div>
+                     <div class="list-text" ></br
+                     <p>이름 : ${list[i].pname}</p></br>
+                     <p>생년월일 : ${list[i].pbirth}</p></br>
+                     <p>성별 :  ${list[i].pgender}</p>
+                  </div>
+                        </article>`;
+        }
+
+        $('#pList').html(output);
+
+        let pageNums = [];
+        let prev = (page - 1 < 1 ? 1 : page - 1);
+        let next = (page + 1 >= maxPage ? maxPage : page + 1)
+
+        // [이전]
+        if (page <= 1) {
+            pageNums.push(` < `);
+        } else {
+            pageNums.push(`<a class="page-prev" href="#" data-page=${prev}> < </a>`);
+        }
+
+        // [페이지번호]
+        for (let i = startPage; i <= endPage; i++) {
+            if (page == i) {
+                pageNums.push(` ${i} `);
+
+            } else {
+                pageNums.push(`<a class="iNum" href="#" data-page=${i}> ${i} </a>`);
+            }
+        }
+
+        // [다음]
+        if (page >= maxPage) {
+            pageNums.push(` > `);
+        } else {
+            pageNums.push(`<a class="page-next" href="#" data-page=${next}> > </a>`);
+        }
+
+        $('#numbering').html(pageNums);
+
+        // [이전], [페이지번호], [다음]을 클릭시
+        $('#numbering a').click(function (e) {
+            page = parseInt($(this).data('page'));
+            console.log(`click page# : ${page}`);
+
+            pagingList(page, list);
+        });
+
+    }
+
+
+
+
+
+</script>
+
+</html>

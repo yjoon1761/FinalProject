@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/member.css">
+    <link rel="stylesheet" href="/css/myinfo.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="/js/page.js"></script>
+    <script src="/js/view.js"></script>
+    <script src="/js/company.js"></script>
+    <script src="/js/cancel.js"></script>
+
+
+    <title>[[${session.loginnickname}]]님의 정보보기</title>
+</head>
+
+<body>
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+<section id="contentview">
+    <div class="myinfo-side-menu">
+        <ul th:if="${session.loginNo != -1 && session.comNo == -1 && session.loginmId != 'admin'}">
+            <a th:onclick="'mView(' + ${session.loginNo} + ')'" ><li>내정보</li></a>
+            <a onclick="pListForm()" ><li>마이펫</li></a>
+            <a th:onclick="'mRes(' + ${session.loginNo} + ')'"><li>예약 내역</li></a>
+            <a th:onclick="'mBoard(' + ${session.loginNo} + ')'"> <li>내가 쓴 게시물</li></a>
+            <a th:onclick="'mCard(' + ${session.loginNo} + ')'"><li>나의 카드</li></a>
+            <a th:onclick="'mCancel(' + ${session.loginNo} + ')'"><li>회원탈퇴</li></a>
+        </ul>
+        <ul th:if="${session.loginNo == -1 && session.comNo != -1 && session.loginmId != 'admin'}">
+            <a th:onclick="'cView(' + ${session.comNo} + ')'" ><li>내정보</li></a>
+            <a th:onclick="'mBoard(' + ${session.comNo} + ')'"> <li>내가 쓴 게시물</li></a>
+            <a th:onclick="'cCancel(' + ${session.comNo} + ')'"><li>회원탈퇴</li></a>
+        </ul>
+
+        <ul th:if="${session.loginmId == 'admin'}">
+            <a th:onclick="'mView(' + ${session.loginNo} + ')'" ><li>내정보</li></a>
+            <a href="/mListForm"><li>회원목록</li></a>
+            <a href="/cListForm"><li>기업목록</li></a>
+            <a th:onclick="'mBoard(' + ${session.loginNo} + ')'"> <li>내가 쓴 게시물</li></a>
+        </ul>
+    </div>
+
+    <div class="myinfo-main">
+        <div id="info">
+
+        </div>
+    </div>
+</section>
+
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+
+</script>
+
+</html>

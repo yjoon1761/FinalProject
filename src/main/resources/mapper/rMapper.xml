@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.icia.petdicalbowwow.dao.RecordsDAO">
+
+    <select id="recRegister" parameterType="String" resultType="String">
+        SELECT DNAME FROM DOCTER WHERE DID= '${dId}' AND COMNO='${comNo}'
+    </select>
+</mapper>

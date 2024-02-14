@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/petcard.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src=/js/page.js"></script>
+
+    <title>배송목록</title>
+</head>
+
+<body>
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+
+<section id="content">
+    <article class="board-content">
+        <div id="pcboard-title">
+            <h1>배송목록</h1>
+        </div>
+
+            <table class="board-table">
+                <thead>
+                <tr>
+                    <th class="delnum">주문번호</th>
+                    <th class="deladdr">배송주소</th>
+                    <th class="delname">수령인</th>
+                </tr>
+                </thead>
+
+
+
+            </table>
+
+    </article>
+</section>
+
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script>
+
+</script>
+
+</html>

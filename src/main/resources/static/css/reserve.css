@@ -1,0 +1,41 @@
+/* map style */
+.res-title{
+    text-align: center;
+    color: brown;
+    padding-top: 20px;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.map-section{
+    margin: auto;
+    width: 700px;
+    height: 500px;
+}
+
+.map-size{
+    width:100%;
+    height:100%;
+}
+
+/* end map style */
+
+/* map */
+.map-info{
+    width: 150px;
+    height: 100px;
+    text-align: center;
+    background: rgba(250, 244, 192, 0.5);
+    border: 1px solid rgba(250, 244, 192, 0.5);
+}
+
+.map-info-name{
+    padding: 5px 0 0 10px;
+    height: 30px;
+    background: #faf4c0;
+    border: 1px solid rgba(250, 244, 192, 0.5);
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* end map */

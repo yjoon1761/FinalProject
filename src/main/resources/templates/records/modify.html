@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/cindex.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <script src="/js/company.js"></script>
+
+    <title></title>
+</head>
+
+<body>
+<section class="sidebar" th:insert="~{company/sidebar :: sidebarFragment}"></section>
+    <section class="recview-big1">
+        <form action="/recModify" method="POST" >
+        <table class="recview-table1">
+            <tr style="height: 50px">
+                <th style="width: 90px">담당의</th>
+                <td>[[${view.RName}]]</td>
+                <th style="width: 90px">강아지 이름</th>
+                <td>[[${view.pet.PName}]]</td>
+                <th >보호자 이름</th>
+                <td>[[${view.pet.member.MName}]]</td>
+            </tr>
+
+            <tr style="height: 50px">
+                <th>생년월일</th>
+                <td>[[${view.pet.PBirth}]]</td>
+                <th>성별</th>
+                <td>[[${view.pet.PGender}]]</td>
+
+                <th>품종</th>
+                <td>[[${view.pet.PKind}]]</td>
+
+            </tr>
+            <tr  style="height: 50px">
+                <th>진료항목</th>
+                <td><select class="form-control" id="menu" name="rCategory" required>
+                    <option value="" disabled selected>진료항목</option>
+                    <option value="내과">내과</option>
+                    <option value="외과">외과</option>
+                    <option value="질병검사">질병검사</option>
+                    <option value="백신접종">백신접종</option>
+                </select></td>
+                <th>진료날짜</th>
+                <td>[[${view.RDate}]]</td>
+                <th >체온</th>
+                <td><input type="text" name="rTemperature" th:value="${view.RTemperature}" maxlength="13"></td>
+            </tr>
+
+            <tr >
+                <th>진료내용</th>
+                <td colspan="6"><textarea name="rContent" class="rtext">[[${view.RContent}]]</textarea></td>
+            </tr>
+            <tr style="height: 50px;">
+                <th colspan="6"><input type="submit" value="수정" id="submit"/></th>
+                <input type="hidden" id="rNo" name="rNo" th:value="${view.RNo}">
+                <input type="hidden" id="rName" name="rName" th:value="${view.RName}">
+                <input type="hidden" id="comNo" name="comNo" th:value="${view.company.ComNo}">
+                <input type="hidden" id="pNo" name="pNo" th:value="${view.pet.pNo}">
+                <input type="hidden" id="rDate" name="rDate" th:value="${view.RDate}">
+            </tr>
+
+        </table>
+</form>
+    </section>
+
+
+<div class="numbering" id="numbering"></div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script>
+
+</script>
+
+</html>

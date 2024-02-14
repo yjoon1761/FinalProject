@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.icia.petdicalbowwow.dao.CompanyDAO">
+<!--    <select id="cSearchList" parameterType="search" resultType="company">-->
+<!--        SELECT * FROM COMPANY WHERE ${category} LIKE '%${keyword}%'-->
+<!--    </select>-->
+
+    <select id="cIdFind" parameterType="company" resultType="String">
+        SELECT CID FROM COMPANY WHERE CEMAIL= '${findIdEmail}' AND CTEL='${findIdPhone}'
+    </select>
+
+    <select id="cIdFind2" parameterType="String" resultType="String">
+        SELECT CID FROM COMPANY WHERE CID= '${findPwId}' AND CEMAIL='${findPwEmail}'
+    </select>
+
+</mapper>

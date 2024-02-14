@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/board.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="/js/page.js"></script>
+
+    <title></title>
+</head>
+
+<body>
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+
+<section id="content">
+    <article id="bregi-content">
+        <div id="bregi-title">
+            <h1>게시물 등록</h1>
+        </div>
+
+        <form action="/bRegister" method="POST" enctype="multipart/form-data">
+            <table class="bregi-table">
+                <tr class="bregi-section">
+                    <th>카테고리</th>
+                    <td id="categoryArea">
+
+                    </td>
+                </tr>
+
+                <tr class="bregi-section">
+                    <th>제목</th>
+                    <td><input type="text" name="bTitle" required size="40"/></td>
+                </tr>
+
+                <tr class="bregi-section">
+                    <th>내용</th>
+                    <td><textarea name="bContent" rows="20" cols="40" maxlength="3999"></textarea></td>
+                </tr>
+
+                <tr class="bregi-section">
+                    <th>첨부파일</th>
+                    <td>
+                        <input type="file" name="bFile" id="bFile">
+                        <br/><img id="bFileName" width="150px"/>
+                        <input type="hidden" name="MNO" th:value="${session.loginNo}">
+                        <input type="hidden" th:if="${session.loginNo ne null}" name="MNO" th:value="${session.loginNo}">
+                        <input type="hidden" th:if="${session.comNo eq null}" name="comNo" th:value="-1">
+                        <input type="hidden" th:if="${session.loginNo eq null}" name="MNO" th:value="-1">
+                        <input type="hidden" th:if="${session.comNo ne null}" name="comNo" th:value="${session.comNo}">
+                    </td>
+                </tr>
+
+                <tr class="bregi-section bregi-button">
+                    <th colspan="2"><input type="submit" value="작성"/></th>
+                </tr>
+            </table>
+        </form>
+    </article>
+</section>
+
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
+<script>
+    $.ajax({
+        url : "/categoryList",
+        type : "post",
+        dataType : "json",
+        success : function (result){
+            categoryList(result);
+        },
+        error : function (){
+            alert("함수 호출 실패!");
+        }
+    });
+
+    function categoryList(list){
+        let output = "";
+
+        output += `<select name="catNo" style="width: 300px;">`;
+
+        for (let i in list){
+            output += `<option value="${list[i].catNo}">${list[i].catName}</option>`
+        }
+
+        output += `</select>`;
+
+        $('#categoryArea').html(output);
+    }
+
+    $('#bFile').on("change", function (event) {
+
+        let file = event.target.files[0];
+
+        let reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#bFileName').attr("src", e.target.result);
+        }
+
+        reader.readAsDataURL(file);
+    });
+</script>
+
+</html>

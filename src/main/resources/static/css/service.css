@@ -1,0 +1,94 @@
+#sboard-title h1 {
+    text-align: center;
+    color: brown;
+    padding-top: 20px;
+    margin-bottom: 20px;
+    font-size: 30px;
+}
+#scontent {
+    z-index: 1;
+    background-color: rgba(250, 244, 192, 0.3);
+    margin-bottom: 10px;
+    float: none;
+}
+.stab{text-align: center; width:100%;}
+
+
+.stab-container{
+    margin: 7% 10%;
+    border-radius: 4px;
+}
+
+.stab-menu {
+    height: 22px;
+    text-align: center;
+}
+
+.stab-menu ul li{
+    list-style-type: none;
+    display: inline-block;
+    transform: translateX(10px);
+}
+.stab-menu ul li a{
+    text-decoration: none;
+    color: rgba(0,0,0,0.4);
+    background-color: #faf4c0;
+    padding: 10px 200px;
+    border-radius: 4px;
+    cursor: grabbing;
+}
+.stab-menu ul li a.active-a{
+    background-color: sandybrown;
+    color: #ffffff;
+}
+
+.tab{
+    display: none;
+}
+
+.tab-active{
+    display: block;
+}
+
+.service-title{
+    font-size: 25px;
+    padding: 50px 0px 20px;
+    margin-left: 180px;
+}
+
+.accordion {
+    background-color: rgba(250, 244, 192, 0.3);
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 76%;
+    text-align: center;
+    border: none;
+    outline: none;
+    transition: 0.4s;
+    margin: 0px 150px;
+    font-weight: bold;
+}
+
+#tab01{
+    width: 100%;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .accordion:hover {
+    background-color: #faf4c0;
+}
+
+/* Style the accordion panel. Note: hidden by default */
+.panel {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    text-align: center;
+    width: 100%;
+}
+.panel img{
+    width: 350px;
+    height: 300px;
+}
+

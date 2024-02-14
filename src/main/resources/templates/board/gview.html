@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/board.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="/js/page.js"></script>
+
+    <title>갤러리 상세보기</title>
+</head>
+
+<body>
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+
+<section id="content">
+    <article id=" board-content">
+        <table class="gView-table">
+            <tr class="gView-section">
+                <th>작성자</th>
+                <td id="writerArea"></td>
+                <th>작성일</th>
+                <td>[[${view.BDate}]]</td>
+                <th>조회수</th>
+                <td>[[${view.BHit}]]</td>
+            </tr>
+
+            <tr class="gView-section">
+                <th>제목</th>
+                <td colspan="5">[[${view.BTitle}]]</td>
+            </tr>
+
+            <tr class="gView-section" style="height: 350px;">
+                <th >사진</th>
+                <td colspan="5"><img th:src="@{|/upload/${view.BFileName}|}" style="width: 100%; height: 350px;"></td>
+            </tr>
+
+            <tr class="gView-section" style="height: auto;">
+                <th>내용</th>
+                <td colspan="5" style="text-align: left">[[${view.BContent}]]</td>
+            </tr>
+
+
+            <tr class="gView-button gView-section">
+                <th th:colspan="6" th:if="${session.loginNo} eq ${view.member.MNO} and ${session.comNo} eq ${view.company.comNo}">
+                    <button id="bModiForm">수정</button>
+                    <button id="bDelete">삭제</button>
+                </th>
+            </tr>
+        </table>
+
+        <div class="gView-cmt">
+            <div>
+                <textarea id="cContent" rows="3" cols="30"></textarea>
+                <button id="writeBtn" th:if="${session.loginNo} ne -2 and ${session.comNo} ne -2">댓글 입력</button>
+
+                <div id="cmtArea"></div>
+
+            </div>
+        </div>
+    </article>
+</section>
+
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script>
+    let bNo = [[${view.bNo}]];
+
+    $('#bModiForm').click(()=>{
+        location.href = `/bModiForm/[[${view.bNo}]]`;
+    });
+
+    $('#bDelete').click(()=>{
+        location.href = `/bDelete/[[${view.bNo}]]`;
+    });
+
+    if ([[${view.member.MNO}]] == -1){
+        let ab = "";
+
+        ab += `
+            [[${view.company.cName}]]
+        `;
+        $('#writerArea').html(ab);
+    }else if ([[${view.company.comNo}]] == -1){
+        let ab = "";
+
+        ab += `
+            [[${view.member.nickName}]]
+        `;
+        $('#writerArea').html(ab);
+    }
+
+    $.ajax({
+        type : "POST",
+        url : `/cmtList`,
+        dataType : "json",
+        data:{
+            "bNo" : bNo
+        },
+        success : function (list){
+            cmtList(list.sort());
+        },
+        error : function () {
+            alert('댓글 불러오기 실패!');
+        }
+    });
+
+    $('#writeBtn').click(()=>{
+        let check = $('#cContent').val();
+
+        if (check != ""){
+            $.ajax({
+                type: "POST",
+                url : "/cmtRegister",
+                data: {
+                    "bNo" : bNo,
+                    "cContent" : $('#cContent').val()
+                },
+                dataType: "json",
+                success : function (list){
+                    cmtList(list.sort());
+                    $('#cContent').val("");
+                },
+                error : function (){
+                    alert('댓글 작성 실패!');
+                }
+            });
+        } else {
+            alert('댓글을 작성해주세요');
+        }
+    });
+
+    function cmtList(list){
+        let output = "";
+
+        output += `
+            <table class="cmt">
+
+
+                <tr class="cmtArea-title">
+                    <th>작성자</th>
+                    <th>내용</th>
+                    <th>작성일</th>
+                </tr>
+
+        `;
+
+        for (let i in list){
+            output += "<tr>";
+
+            if (list[i].member.mno===-1 && list[i].company.comNo!==-1){
+                output += `<td>${list[i].company.cname}</td>`;
+            }else if (list[i].company.comNo===-1 && list[i].member.mno!==-1){
+                output += `<td>${list[i].member.nickName}</td>`;
+            }
+
+            output += `
+                    <td class="ccontent" >${list[i].ccontent}</td>
+                    <td style=" white-space: nowrap;">${list[i].cdate.substring(0, 10)}</td>
+            `
+
+            if ([[${session.loginNo}]] === list[i].member.mno && [[${session.comNo}]] === list[i].company.comNo){
+                output += `<td><button class="cmtModify" data-value="${list[i].cno}"/>수정</button></td>
+                           <td><button class="cmtDelete" data-value="${list[i].cno}">삭제</button></td>`;
+            }
+            else if ([[${session.comNo}]] === list[i].company.comNo && [[${session.loginNo}]] === list[i].member.mno){
+                output += `<td><button class="cmtModify" data-value="${list[i].cno}"/>수정</button></td>
+                           <td><button class="cmtDelete" data-value="${list[i].cno}">삭제</button></td>`;
+            }
+
+            output += `</tr>`;
+
+        }
+
+        output += "</table>";
+        $('#cmtArea').html(output);
+
+        $('.cmtModify').click(function(e){
+            let cNo = $(this).data("value");
+
+            $.ajax({
+                type : "POST",
+                url : "/cmtModify",
+                data : {
+                    "cNo" : cNo,
+                    "bNo" : [[${view.bNo}]],
+                    "cContent" : $('#cContent').val()
+                },
+                dataType : "json",
+                success : function(list){
+                    cmtList(list);
+                    $('#cContent').val("");
+                },
+                error : function(){
+                    alert('댓글 수정 실패!');
+                }
+            });
+        });
+
+        $('.cmtDelete').click(function(e){
+            let cNo = $(this).data("value");
+
+            $.ajax({
+                type : "POST",
+                url : "/cmtDelete",
+                data : {
+                    "cNo" : cNo,
+                    "bNo" : [[${view.bNo}]],
+                    "cContent" : $('#cContent').val()
+                },
+                dataType : "json",
+                success : function(list){
+                    cmtList(list);
+                    $('#cContent').val("");
+                },
+                error : function(){
+                    alert('댓글 삭제 실패!');
+                }
+            });
+        });
+    }
+</script>
+
+</html>

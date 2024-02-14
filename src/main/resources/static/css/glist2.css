@@ -1,0 +1,64 @@
+.gallery-box table, .gallery-box th, .gallery-box tr, .gallery-box td{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+#img{
+    width: 30px;
+}
+
+.post-section {
+    border:double 3px black;
+    text-align: center;
+    margin: 100px 48px;
+    width: 120px;
+
+}
+
+.post-text {
+    margin-top: 10px; /*post-section div와 간격을 주기 위해*/
+    font-size: 16px;
+}
+
+.comment-section{
+    width: 20%;
+    border-bottom: solid 2px;
+    margin: -200px 51px 100px;
+}
+
+.hit-section{
+    width: 20%;
+    border-bottom: solid 2px;
+    margin: -50px 50px 100px;
+}
+.hit{
+    margin-top: 50px; /*post-section div와 간격을 주기 위해*/
+    font-size: 16px;
+    text-align: left;
+}
+
+/*#posterDiv{*/
+/*    margin-top: 11px;*/
+/*}*/
+
+.main-hit { /* 메인페이지 갤러리에서 조회수부분*/
+    height: 5px;
+    font-size: 12px;
+}
+/*index 갤러리 */
+#container{
+    margin-top: 18px;
+}
+
+.post {
+    width: 130px;
+    height: 100px;
+}
+
+.main-text {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    display: block;
+    width: 130px;
+}

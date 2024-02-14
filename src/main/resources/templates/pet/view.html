@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/pet.css">
+    <link rel="stylesheet" href="/css/myinfo.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script src="https://kit.fontawesome.com/32dee6c2b4.js" crossorigin="anonymous"></script>
+    <script src="/js/page.js"></script>
+    <script src="/js/view.js"></script>
+
+    <title>펫정보 상세보기</title>
+</head>
+
+<body>
+
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+
+<section id="contentview">
+    <div class="myinfo-side-menu">
+        <ul th:if="${session.loginNo != -1 && session.comNo == -1}">
+            <a th:onclick="'mView(' + ${session.loginNo} + ')'" ><li>내정보</li></a>
+            <a onclick="pListForm()" ><li>마이펫</li></a>
+            <a th:onclick="'myres(' + ${session.loginNo} + ')'"><li>예약 내역</li></a>
+            <a th:onclick="'myboard(' + ${session.loginNo} + ')'"> <li>내가 쓴 게시물</li></a>
+            <a th:onclick="'mycard(' + ${session.loginNo} + ')'"><li>나의 카드</li></a>
+            <a th:onclick="'mcancel(' + ${session.loginNo} + ')'"><li>회원탈퇴</li></a>
+        </ul>
+        <ul th:if="${session.loginNo == -1 && session.comNo != -1}">
+            <a th:onclick="'cview(' + ${session.comNo} + ')'" ><li>내정보</li></a>
+            <a th:onclick="'myboard(' + ${session.comNo} + ')'"> <li>내가 쓴 게시물</li></a>
+            <a th:onclick="'mcancel(' + ${session.comNo} + ')'"><li>회원탈퇴</li></a>
+        </ul>
+    </div>
+    <div class="myinfo-main">
+        <div class="plist">
+    <div id="pboard-title">
+        <h1>마이펫 상세보기</h1>
+    </div>
+
+    <table class="pview-table">
+        <tr class="pview-section">
+            <th style="width: 120px">이름</th>
+            <td>[[${view.PName}]]</td>
+        </tr>
+
+        <tr class="pview-section">
+            <th>생년월일</th>
+            <td>[[${view.PBirth}]]</td>
+        </tr>
+
+        <tr class="pview-section">
+            <th>성별</th>
+            <td>[[${view.PGender}]]</td>
+        </tr>
+
+        <tr class="pview-section">
+            <th>품종</th>
+            <td>[[${view.PKind}]]</td>
+        </tr>
+
+        <tr class="pview-section">
+            <th>혈액형</th>
+            <td>[[${view.PBloodType}]]</td>
+        </tr>
+
+        <tr class="pview-section">
+            <th>중성화여부</th>
+            <td>[[${view.PNeutering}]]</td>
+        </tr>
+
+        <tr class="pview-section">
+            <th>키</th>
+            <td>[[${view.PHeight}]]</td>
+        </tr>
+
+        <tr class="pview-section">
+            <th>몸무게</th>
+            <td>[[${view.PWeight}]]</td>
+        </tr>
+
+        <tr class="pview-section">
+            <th>질병여부</th>
+            <td>[[${view.pDisease}]]</td>
+        </tr>
+
+        <tr class="pview-section">
+            <th>접종주사</th>
+            <td>[[${view.pVaccination}]]</td>
+        </tr>
+
+        <tr class="pview-section">
+            <th>알러지종류</th>
+            <td>[[${view.pAllergy}]]</td>
+        </tr>
+
+        <tr class="pview-section">
+            <th>특이사항</th>
+            <td>[[${view.pContent}]]</td>
+        </tr>
+
+        <tr class="pview-section">
+            <th>프로필사진</th>
+            <td><img th:src="@{|/profile/${view.pFileName}|}" width="200px"></td>
+        </tr>
+
+        <tr class="pview-button pview-section">
+            <th colspan="2">
+                <button id="pModiForm">수정</button>
+                <button id="pDelete">삭제</button>
+            </th>
+        </tr>
+    </table>
+
+        </div>
+</div>
+</section>
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script>
+    $('#pModiForm').click(()=>{
+        location.href = `/pModiForm/[[${view.pNo}]]`;
+    });
+
+    $('#pDelete').click(()=>{
+        alert('삭제 완료!')
+        location.href = `/pDelete/[[${view.pNo}]]`;
+    });
+</script>
+
+</html>

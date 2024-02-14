@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="shortcut icon" href="favicon/favicon.ico" type="image/x-icon">
+
+    <title></title>
+</head>
+
+<body>
+    <table id="crdList">
+        <tr>
+            <th>주문번호</th>
+            <th>주문자</th>
+            <th>펫이름</th>
+            <th>전화번호</th>
+            <th>배송주소</th>
+        </tr>
+    </table>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script>
+    $.ajax({
+       url : "crdList",
+       type : "post",
+       dataType : "json",
+       success : function (result){
+           console.log(result);
+           crdList(result);
+       },
+       error : function (){
+           alert("crdList 함수 통신 실패");
+       }
+    });
+
+    function crdList(list){
+        let output = "";
+
+        output += `
+            <tr>
+                <th>주문번호</th>
+                <th>주문자</th>
+                <th>펫이름</th>
+                <th>전화번호</th>
+                <th>배송주소</th>
+            </tr>
+        `;
+
+        for (let i in list){
+            if ([[${session.loginNo}]] === list[i].pet.member.mno){
+            output += `
+                <tr>
+                    <td>${list[i].crdNum}</td>
+                    <td>${list[i].crdName}</td>
+                    <td>${list[i].pet.pname}</td>
+                    <td>${list[i].crdPhone}</td>
+                    <td>${list[i].crdAddr}</td>
+                    <td><button class="crdDelete" data-value="${list[i].crdNo}" data-value2="${list[i].pet.pno}">취소</button></td>
+            </tr>`;
+            }
+
+        }
+
+        $('#crdList').html(output);
+
+        $('.crdDelete').click(function(e){
+            let crdNo = $(this).data("value");
+            let pNo = $(this).data("value2");
+
+            if (confirm("정말로 취소하시겠습니까?")){
+                $.ajax({
+                    url : "/crdDelete",
+                    type : "post",
+                    data : {
+                        "crdNo" : crdNo,
+                        "pNo" : pNo
+                    },
+                    dataType : "json",
+                    success : function (result){
+                        alert("정상적으로 취소되었습니다.");
+                        crdList(result);
+                    },
+                    error : function (){
+                        alert("취소 실패");
+                    }
+                });
+            }else {
+                alert("취소 실패");
+            }
+        });
+    }
+</script>
+
+</html>

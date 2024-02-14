@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/cindex.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="/js/company.js"></script>
+
+    <title>차트 리스트</title>
+</head>
+
+<body>
+<section class="sidebar" th:insert="~{/company/sidebar :: sidebarFragment}"></section>
+<section class="clist-section">
+    <div class="cmain-title1">
+        <h1>차트 리스트</h1>
+    </div>
+    <hr class="clist-line">
+    <div>
+        <span>날짜선택</span>
+<!--        <input type="date" name="birth">&ensp;&ensp;-->
+        <input type="date" id="calbtn" value="차트내역" onchange="loadRecordsByDate()">
+
+
+        <select id="limit">
+            <option value="5">5개씩</option>
+            <option value="10">10개씩</option>
+            <option value="20">20개씩</option>
+        </select>
+
+        <select id="category">
+            <option value="RNAME">이름</option>
+        </select>
+
+        <input type="text" id="keyword" placeholder="애완견 이름으로 검색"/>
+
+        <button class="search-btn" id="btnSearch"><i class="fa-solid fa-magnifying-glass"></i></button>
+    </div>
+
+    <table class="clist-table">
+        <thead>
+        <tr>
+            <th>진료날짜</th>
+            <th>강아지</th>
+            <th>보호자</th>
+            <th>담당의</th>
+            <th>진료내용</th>
+        </tr>
+        </thead>
+
+        <tbody id="recList">
+
+        </tbody>
+
+        <tfoot>
+        <tr>
+            <th colspan="5" id="numbering"></th>
+        </tr>
+        </tfoot>
+    </table>
+</section>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script>
+    // let now = new Date();
+    // let HH = String(now.getHours());
+    // let mm = String(now.getMinutes()).padStart(2, "0");
+    // let nowTime = HH + mm;
+    //
+    // console.log('notTime = ', parseInt(nowTime));
+    //
+    // let todayStr = new Date().toISOString().substring(0,10);
+    // $('#currentDate').val(todayStr);
+    let page = 1;
+    let limit = 5;
+    const block = 5;
+    let count = 0;
+    let list = [];
+    let comNo=[[${session.comNo}]];
+
+    console.log(new Date);
+    console.log(comNo);
+    var today = new Date();
+
+    var year = today.getFullYear();
+    var month = ('0' + (today.getMonth() + 1)).slice(-2);
+    var day = ('0' + today.getDate()).slice(-2);
+
+
+    var dateString = year + '-' + month + '-' + day;
+
+    $(() => {
+        $.ajax({
+            url: "/comRecList",
+            type: "post",
+            dataType: "json",
+            success: function (result) {
+                list = result;
+                pagingList(page, list);
+            },
+            error: function () {
+                alert('comRecList 호출 실패!');
+            }
+        });
+    });
+
+    $('#limit').change(() => {
+        page = 1;
+        limit = Number($('#limit').val());
+        pagingList(page, list);
+    });
+
+    $('#btnSearch').click(() => {
+        let category = $('#category').val();
+        let keyword = $('#keyword').val();
+
+        $.ajax({
+            url: "rSearchList",
+            type: "post",
+            data: {
+                "category": category,
+                "keyword": keyword
+            },
+            dataType: "json",
+            success: function (result) {
+                list = result;
+                pagingList(page, list);
+            },
+            error: function () {
+                alert('rSearchList함수 호출 실패!');
+            }
+        });
+    });
+
+    // '날짜선택'
+    function loadRecordsByDate() {
+        let selectedDate = $('#calbtn').val();
+
+        $.ajax({
+            url: "/recList",
+            type: "post",
+            dataType: "json",
+            data: {
+                "dateString": selectedDate,
+                "comNo" : comNo
+            },
+            success: function (result) {
+                list = result;
+                pagingList(page, list);
+            },
+            error: function () {
+                alert('reList 호출 실패!');
+            }
+        });
+    }
+
+    function pagingList(page, list) {
+        count = list.length;
+
+        console.log(`page# : ${page}`);
+        console.log(`count# : ${count}`);
+
+        let maxPage = Math.ceil(count / limit);
+
+        if (page > maxPage) {
+            if (maxPage == 0) {
+                maxPage = 1;
+            }
+
+            page = maxPage;
+        }
+
+        let startRow = (page - 1) * limit;
+        let endRow = page * limit - 1;
+
+        if (endRow >= count) {
+            endRow = count - 1;
+        }
+
+        let startPage = ((Math.ceil(page / block)) - 1) * block + 1;
+        let endPage = startPage + block - 1;
+
+        if (endPage > maxPage) {
+            endPage = maxPage;
+        }
+
+        output = ``;
+
+
+        for (let i = startRow; i <= endRow; i++) {
+            output += `
+                <tr>
+                    <td><a style="color: black;" href="/recView/${list[i].rno}">${list[i].rdate}</a></td>
+                    <td>${list[i].pet.pname}</td>
+                    <td>${list[i].pet.member.mname}</td>
+                    <td>${list[i].rname}</td>
+
+                    <td>${list[i].rcontent}</td>
+                </tr>
+            `;
+        }
+
+        $('#recList').html(output);
+
+        let pageNums = [];
+        let prev = (page - 1 < 1 ? 1 : page - 1);
+        let next = (page + 1 >= maxPage ? maxPage : page + 1)
+
+        if (page <= 1) {
+            pageNums.push(` < `);
+        } else {
+            pageNums.push(`<a class="prev" href="#" data-page=${prev}> < </a>`);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            if (page == i) {
+                pageNums.push(` ${i} `);
+            } else {
+                pageNums.push(`<a class="iNum" href="#" data-page=${i}> ${i} </a>`);
+            }
+        }
+
+        if (page >= maxPage) {
+            pageNums.push(` > `);
+        } else {
+            pageNums.push(`<a class="next" href="#" data-page=${next}> > </a>`);
+        }
+
+        $('#numbering').html(pageNums);
+
+        $('#numbering a').click(function (e) {
+            page = parseInt($(this).data('page'));
+            console.log(`click page# : ${page}`);
+
+            pagingList(page, list);
+        });
+    }
+
+</script>
+
+</html>

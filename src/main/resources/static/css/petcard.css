@@ -1,0 +1,177 @@
+#pcboard-title h1{
+    text-align: center;
+    color: brown;
+    padding-top: 20px;
+    margin-bottom: 20px;
+    font-size: 30px;
+}
+
+/* 카드 발급 안내문 페이지 */
+
+.cardregi-form, .cardregi-form tr, .cardregi-form th, .cardregi-form td{
+    border: 3px solid sandybrown;
+    border-collapse: collapse;
+    text-align: center;
+    height: 100px;
+    margin: auto;
+}
+
+.cardregi-button td{
+    border-top: 3px solid sandybrown;
+    height: 100px;
+    text-align: center;
+}
+
+.cardregi-button button{
+    width: 100px;
+    height: 30%;
+    background-color: sandybrown;
+    border-radius: 4px;
+}
+#nextButton{
+    width: 80px;
+    height: 35px;
+    background-color: sandybrown;
+    color: beige;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+/* 카드 발급 안내문 페이지 종료 */
+
+/* 카드 발급 정보 등록 페이지 */
+
+.pcregi-table {
+    width: 600px;
+    text-align: center;
+    margin: auto;
+
+}
+
+.pcregi-table, .pcregi-table tr, .pcregi-table td, .pcregi-table th{
+    border: 3px solid sandybrown;
+    border-collapse: collapse;
+    height: 70px;
+
+}
+
+.pcregi-section:nth-child(odd) {
+    background-color: #faf4c0;
+}
+
+.pcregi-table #dName, .pcregi-table #dPhone {
+    width: 300px;
+    height: 20px;
+}
+
+.pcregi-table input#sample6_postcode, .pcregi-table input#sample6_address, .pcregi-table input#sample6_detailAddress {
+    height: 20px;
+}
+
+.pcregi-table input#sample6_address, .pcregi-table input#sample6_detailAddress {
+    width: 300px;
+}
+
+.pcregi-table input[type="button"]{
+    transform: translateY(1px);
+    border-radius: 4px;
+    background-color: sandybrown;
+    width: 94px;
+}
+
+.pcregi-button input{
+    width: 80px;
+    height: 50%;
+    background-color: sandybrown;
+    border-radius: 4px;
+}
+
+/* 카드 발급 정보 등록 페이지 끝 */
+
+
+
+/*배송정보 페이지 시작*/
+.board-table {
+    width: 1100px;
+    margin: auto;
+    font-size: 13px;
+    border-top: 1px solid sandybrown;
+    border-bottom: 1px solid sandybrown;
+}
+.board-table th {
+    text-align: center;
+}
+
+.board-table .delnum {
+    width: 100px;
+    text-align: center;
+}
+
+.board-table .delname {
+    width: 200px;
+}
+
+.board-table td, .board-table th {
+    padding: 14px 0;
+}
+
+.board-table tbody td {
+    border-top: 1px solid sandybrown;
+    text-align: center;
+}
+
+.board-table tbody th {
+    padding-left: 28px;
+    padding-right: 14px;
+    border-top: 1px solid sandybrown;
+    text-align: left;
+}
+
+.pclist-table {
+    width: 800px;
+    margin: auto;
+    font-size: 13px;
+    border-top: 1px solid sandybrown;
+    border-bottom: 1px solid sandybrown;
+}
+
+.pclist-table th {
+    text-align: center;
+}
+
+.pclist-table .th-pno {
+    /*width: 100px;*/
+    text-align: center;
+}
+
+.pclist-table td, .pclist-table th {
+    padding: 14px 0;
+}
+
+.pclist-table tbody td {
+    border-top: 1px solid sandybrown;
+    text-align: center;
+}
+
+.crdinfo{
+    padding: 10px;
+}
+/*차트목록 시작*/
+.plist-head{
+    margin-left: 180px;
+    margin-bottom: 10px;
+}
+.list-search{
+    height: 37px;
+    width: 250px;
+}
+.list-category{
+    height: 40px;
+}
+.list-name{
+    height: 40px;
+}
+.list-btn{
+    height: 40px;
+    width: 40px;
+}

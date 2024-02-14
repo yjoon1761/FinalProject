@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/join.css}">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="/js/page.js"></script>
+
+    <title>회원가입 페이지</title>
+</head>
+
+<body>
+
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+
+
+<section id="content">
+        <!-- 개인 회원가입 -->
+    <section class="join-tab-container">
+        <!--start tab-menu-->
+        <div class="join-tab-menu">
+            <ul>
+                <li><a class="join-tab-a join-active-a" data-id="join-tab1">개인회원 가입</a></li>
+                <li><a class="join-tab-a" data-id="join-tab2">기업회원 가입</a></li>
+            </ul>
+        </div>
+        <!--end of tab-menu-->
+
+        <!--start of tab one-->
+        <div  class="join-tab join-tab-active" data-id="join-tab1">
+            <form action="mJoin" method="POST" enctype="multipart/form-data" name="mJoinForm">
+                <table class="join-table">
+                    <caption></caption>
+
+                    <tr class="join-section">
+                        <th>아이디</th>
+                        <td><input type="text" id="MID" name="MID" required size="40"/>
+                            <br/> <span id="mcheck1"></span></td>
+                    </tr>
+
+                    <tr class="join-section">
+                        <th>비밀번호</th>
+                        <td><input type="password" id="mPw" name="mPw" required size="40"/>
+                            <br/><span id="mcheck2"></span></td>
+                    </tr>
+
+                    <tr class="join-section">
+                        <th>비밀번호 확인</th>
+                        <td><input type="password" id="mcheckPw" required size="40"/>
+                            <br/><span id="mcheck3"></span></td>
+                    </tr>
+
+                    <tr class="join-section">
+                        <th>이름</th>
+                        <td><input type="text" name="mName" id="mName" required size="40"/></td>
+                    </tr>
+
+                    <tr class="join-section">
+                        <th>닉네임</th>
+                        <td><input type="text" id="nickName" name="nickName" required size="40"/>
+                            <br/><span id="mcheck4"></span></td>
+                    </tr>
+
+                    <tr class="join-section">
+                        <th>생년월일</th>
+                        <td><input type="date" name="mBirth" required/></td>
+                    </tr>
+
+                    <tr class="join-section">
+                        <th>성별</th>
+                        <td>남성 <input type="radio" name="mGender" value="남성"/>
+                            여성 <input type="radio" name="mGender" value="여성"/></td>
+                    </tr>
+
+                    <tr class="join-section">
+                        <th>연락처</th>
+                        <td>
+                            <input id="phone" type="text" name="mPhone" placeholder="전화번호입력" maxlength="13"/>
+                            <input type="button" id="phoneCheck" class="doubleCheck" value="인증번호 보내기"/><br/>
+                            <input id="phone2" type="text" name="phone2" title="인증번호 입력" maxlength="4"/>
+                            <input type="button" id="phoneCheck2" class="doubleCheck" value="본인인증"><br/>
+                            <span id="successPhoneCheck">휴대폰 번호 입력후 인증번호 보내기를 해주십시오.</span><br/>
+                            <input type="hidden" id="phoneDoubleCheck"/>
+                        </td>
+                    </tr>
+
+                    <tr class="join-section">
+                        <th>이메일</th>
+                        <td>
+                            <input type="email" name="mEmail" id="mEmail" size="25" required/>
+                            <!--        <span id="checkEmail"><input type="button" id="btnEmail" value="인증번호 발송"/></span>-->
+                        </td>
+                    </tr>
+
+                    <tr class="join-section">
+                        <th>주소</th>
+                        <td>
+                            <input type="text" id="sample6_postcode" placeholder="우편번호" size="25"/>
+                            <input type="button" onclick="sample6_execDaumPostcode()" value="우편번호 찾기" /><br/>
+                            <input type="text" size="40" id="sample6_address" placeholder="주소"/><br/>
+                            <input type="text" size="40" id="sample6_detailAddress" placeholder="상세주소"/>
+                            <input type="hidden" id="mAddr" name="mAddr"/>
+                        </td>
+                    </tr>
+
+                    <tr class="join-section">
+                        <th>프로필 사진</th>
+                        <td><input type="file" name="mFile" id="mFile"/>
+                            <br/><img id="mFileName" width="150px"/></td>
+                    </tr>
+
+                    <tr class="join-section join-button">
+                        <th colspan="2"><input type="button" value="가입" id="submitForm"/></th>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <!--end of tab one-->
+
+        <!--start of tab two-->
+        <div  class="join-tab " data-id="join-tab2">
+            <form action="/cJoin" method="POST" enctype="multipart/form-data" name="cJoinForm">
+                <table class="join-table">
+                    <tr class="join-section">
+                        <th>사업자 번호</th>
+                        <td><input type="text" id="cbsNum" name="cbsNum" placeholder="사업자번호입력" maxlength="10">
+                            <button id="check_cbsnum">확인</button><br/>
+                            <span id="checkNum"></span></td>
+                    </tr>
+
+                    <tr class="join-section">
+                        <th>아이디</th>
+                        <td><input type="text" name="cId" id="cId" required size="40"/>
+                            <br/><span id="ccheck1"></span></td>
+                    </tr>
+
+                    <tr class="join-section">
+                        <th>비밀번호</th>
+                        <td><input type="password" name="cPw" id="cPw" required size="40"/>
+                            <br/><span id="ccheck2"></span></td>
+                    </tr>
+
+                    <tr class="join-section">
+                        <th>비밀번호 확인</th>
+                        <td><input type="password" id="ccheckPw" required size="40"/>
+                            <br/><span id="ccheck3"></span></td>
+
+                    </tr>
+
+                    <tr class="join-section">
+                        <th>기업명</th>
+                        <td><input type="text" name="cName" required size="40"/></td>
+                    </tr>
+
+                    <tr class="join-section">
+                        <th>이메일</th>
+                        <td>
+                            <input type="email" name="cEmail" id="cEmail" required/>
+                        </td>
+                    </tr>
+
+                    <tr class="join-section">
+                        <th>연락처</th>
+                        <td><input type="text" name="cTel"/></td>
+                    </tr>
+
+                    <tr class="join-section">
+                        <th>주소</th>
+                        <td>
+                            <input type="text" id="csample6_postcode" placeholder="우편번호" size="25"/>
+                            <input type="button" onclick="csample6_execDaumPostcode()" value="우편번호 찾기"/><br/>
+                            <input type="text" size="40" id="csample6_address" placeholder="주소"/><br/>
+                            <input type="text" size="40" id="csample6_detailAddress" placeholder="상세주소"/>
+                            <input type="hidden" id="cAddr" name="cAddr"/>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>프로필사진</th>
+                        <td><input type="file" name="cFile" id="cFile">
+                            <br/><img id="cFileName" width="150px"/></td>
+                        </td>
+
+                    </tr>
+
+                    <tr class="join-section join-button">
+                        <th colspan="2"><input type="button" value="가입" id="csubmitForm" /></th>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <!--end of tab two-->
+
+        </div>
+    </section>
+    <!-- 개인 회원가입 END -->
+
+
+
+
+</section>
+
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+
+</body>
+
+<script th:src="@{http://code.jquery.com/jquery-latest.min.js}"></script>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+    $(document).ready(function(){
+        $('.join-tab-a').click(function(){
+            $(".join-tab").removeClass('join-tab-active');
+            $(".join-tab[data-id='"+$(this).attr('data-id')+"']").addClass("join-tab-active");
+            $(".join-tab-a").removeClass('join-active-a');
+            $(this).parent().find(".join-tab-a").addClass('join-active-a');
+        });
+    });
+</script>
+
+<script>
+
+    let check_id = false;
+    let check_pw = false;
+    let check_pw2 = false;
+    let check_nickName = false;
+    let check_phone = false;
+    let check_cbsnum = false;
+
+    $('#btnEmail').click(()=>{
+        let mEmail = $('#mEmail').val();
+        let mcheckEmail = $('#checkEmail');
+
+        // ajax를 사용해서 이메일 전송 및 인증번호 받아오기
+        $.ajax({
+            type: "POST",
+            url: "emailCheck",
+            data: {"mEmail": mEmail},
+            dataType: "text",
+            success: function (uuid) {
+
+                console.log(uuid);
+                mcheckEmail.empty();
+                mcheckEmail.append(`<br/><input type="text" id="uuid1" placeholder="인증번호 입력"/>`);
+                mcheckEmail.append(`<input type="button" value="인증" id="btnUUID" data-value="${uuid}"/>`);
+            },
+            error : function (){
+                alert('emailCheck 통신 실패!');
+            }
+        });
+
+    });
+
+
+    // $(document).on("click", "#btnUUID", function(e){
+    //   // 이메일로 전송된 인증번호
+    //   let uuid = $(this).data("value");
+    //
+    //   // 인증창에 입력한 인증번호
+    //   let uuid1 = $('#uuid1').val();
+    //
+    //   console.log(`uuid : ${uuid} | uuid1 : ${uuid1}`);
+    //
+    //   if(uuid == uuid1){
+    //     alert('이메일 인증 성공!');
+    //     $('#checkEmail').hide();
+    //     $('#mEmail').attr('readonly', true);
+    //     check_email = true;
+    //   } else {
+    //     alert('인증번호를 확인해주세요!');
+    //     $('#uuid1').val("");
+    //   }
+    // });
+
+    // 아이디 중복 체크 : id="MID" 요소의 키를 눌렀다가 땟을때 실행되는 함수
+    $('#MID').keyup(()=>{
+        let idVal = $('#MID').val();      // 아이디 입력창에 입력한 값
+        let check1 = $('#mcheck1');      // 아이디 입력창 아래 있는 <span>태그 (인라인 영역)
+        let spc = idVal.search(/\s/);
+        console.log(idVal);
+        // Ajax를 사용해서 아이디 중복체크
+        $.ajax({
+            type : "POST",
+            url : "idCheck",
+            data : { "idVal" : idVal },
+            dataType: "text",
+            success : function(result){
+                if(idVal.length == 0) {
+                    check1.html('아이디를 입력해주세요');
+                    check1.css('color', 'lightgray');
+                    check_id = false;
+                } else if(spc != -1) {
+                    check1.html('공백없이 입력해주세요');
+                    check1.css('color', 'red');
+                    check_id = false;
+                } else if(result == "OK" && spc == -1) {
+                    check1.html('사용 가능한 아이디');
+                    check1.css('color', 'blue');
+                    check_id = true;
+                } else {
+                    check1.html('사용중인 아이디');
+                    check1.css('color', 'red');
+                    check_id = false;
+                }
+            },
+            error : function(){
+                alert('idCheck 통신 실패!');
+            }
+        });
+    });
+
+    // 비밀번호 정규식
+    $('#mPw').keyup(()=>{
+        let mPw = $('#mPw').val();
+        let check2 = $('#mcheck2');
+
+        // 기본값 -1
+        let num = mPw.search(/[0-9]/);          // 숫자 입력 여부
+        let eng = mPw.search(/[a-z]/);
+        let ENG = mPw.search(/[A-Z]/);          // 영문자 입력 여부
+        let spe = mPw.search(/[~!@#$%^&*]/);    // 특수문자 입력 여부
+        let spc = mPw.search(/\s/);             // 공백 입력 여부
+        let eng2 = (eng==-1 || ENG==-1);
+        if(spc != -1){
+            check2.html('공백없이 입력');
+            check2.css('color', 'red');
+            check_pw = false;
+        } else if(mPw.length < 8 || mPw.length > 16){
+            check2.html('8자리에서 16자리 이내로 입력');
+            check2.css('color', 'red');
+            check_pw = false;
+        } else if(num==-1 || spe==-1 || eng2==-1){
+            check2.html('영문자, 숫자, 특수문자를 혼합해서 입력');
+            check2.css('color', 'red');
+            check_pw = false;
+        } else {
+            check2.html('사용가능한 비밀번호');
+            check2.css('color', 'blue');
+            check_pw = true;
+        }
+    });
+
+    // 비밀번호 입력
+    $('#mcheckPw').keyup(()=>{
+        let mPw = $('#mPw').val();
+        let checkPw = $('#mcheckPw').val();
+        let check3 = $('#mcheck3');
+        let spc = checkPw.search(/\s/);
+
+        if(checkPw.length == 0) {
+            check3.html('비밀번호 입력');
+            check3.css('color', 'lightgray');
+            check_pw2 = false
+        } else if(!check_pw) {
+            check3.html('비밀번호를 확인해주세요');
+            check3.css('color', 'red');
+            check_pw2 = false;
+        } else if(spc!=-1){
+            check3.html('공백없이 입력');
+            check3.css('color', 'red');
+            check_pw2 = false
+        } else if(mPw == checkPw && spc == -1){
+            check3.html('비밀번호 일치');
+            check3.css('color', 'blue');
+            check_pw2 = true;
+        } else {
+            check3.html('비밀번호 불일치');
+            check3.css('color', 'red');
+            check_pw2 = false;
+        }
+    });
+
+    // 닉네임 중복 체크
+    $('#nickName').keyup(()=>{
+        let nickName = $('#nickName').val();
+        let check4 = $('#mcheck4');
+        let spc = nickName.search(/\s/);             // 공백 입력 여부
+
+        // Ajax를 사용해서 닉네임 중복체크
+        $.ajax({
+            type : "POST",
+            url : "nickNameCheck",
+            data : { "nickName" : nickName },
+            dataType: "text",
+            success : function(result){
+                if(nickName.length == 0) {
+                    check4.html('닉네임을 입력해주세요');
+                    check4.css('color', 'lightgray');
+                    check_nickName = false;
+                } else if(spc != -1) {
+                    check4.html('공백 없이 입력해주세요');
+                    check4.css('color', 'red');
+                    check_nickName = false;
+                } else if(result=="OK" && spc==-1){
+                    check4.html('사용 가능한 닉네임');
+                    check4.css('color', 'blue');
+                    check_nickName = true;
+                } else {
+                    check4.html('사용중인 닉네임');
+                    check4.css('color', 'red');
+                    check_nickName = false;
+                }
+            },
+            error : function(){
+                alert('nickNameCheck 통신 실패!');
+            }
+        });
+    });
+
+    // 휴대폰 본인인증1
+    let phone = $("#phone");
+    let phone2 = $("#phone2");
+    let phoneFormCheck = /^(01[016789]{1})-?[0-9]{3,4}-?[0-9]{4}$/;
+    let successPhoneCheck = $("#successPhoneCheck");
+    let code2 = "";
+
+    $("#phoneCheck").click(function() {
+        $.ajax({
+            type : "POST",
+            url : "phoneCheck",
+            cache : false,
+            data:{"phone" : phone.val()},
+            success : function(data) {
+                console.log(data);
+                console.log(phoneFormCheck.test(phone.val()));
+                if (phoneFormCheck.test(phone.val()) == false) {
+                    alert("휴대폰 번호가 올바르지 않습니다.");
+                    successPhoneCheck.text("유효한 번호를 입력해주세요.");
+                    successPhoneCheck.css("color", "red");
+                    phone.attr("autofocus", true);
+                } else {
+                    alert("인증번호 발송이 완료되었습니다.\n휴대폰에서 인증번호를 확인해주세요.");
+                    phone2.attr("disabled", false);
+                    $("#phoneCheck2").css("display", "inline-block");
+                    successPhoneCheck.text("인증번호 입력 후 인증완료를 눌러주세요.");
+                    successPhoneCheck.css("color", "green");
+                    phone.attr("readonly", true);
+                    code2 = data;
+                }
+            }
+        });
+    });
+
+    // 휴대폰 본인인증2
+    $("#phoneCheck2").click(function() {
+        console.log(phone2.val());
+        console.log(code2);
+        if (phone2.val() == '') {
+            successPhoneCheck.text("인증번호를 입력해주세요.");
+            successPhoneCheck.css("color", "red");
+            $("#phoneDoubleCheck").val("false");
+            $(this).attr("autofocus", true);
+        } else {
+            if (phone2.val() == code2) {
+                successPhoneCheck.text("인증번호가 일치합니다.");
+                successPhoneCheck.css("color", "green");
+                $("#phoneDoubleCheck").val("true");
+                phone2.attr("disabled", true);
+                check_phone = true;
+            } else {
+                successPhoneCheck.text("인증번호가 일치하지 않습니다. 다시 입력해주세요.");
+                successPhoneCheck.css("color", "red");
+                $("#phoneDoubleCheck").val("false");
+                $(this).attr("autofocus", true);
+            }
+        }
+    });
+
+    // 다음 주소 API
+    function sample6_execDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function (data) {
+                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                var addr = ''; // 주소 변수
+
+                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                    addr = data.roadAddress;
+                } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                    addr = data.jibunAddress;
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById('sample6_postcode').value = data.zonecode;
+                document.getElementById("sample6_address").value = addr;
+                // 커서를 상세주소 필드로 이동한다.
+                document.getElementById("sample6_detailAddress").focus();
+
+            }
+        }).open();
+    }
+
+    // 사진 미리보기
+    $('#mFile').on("change", function (event){
+
+        let file = event.target.files[0];
+
+        let reader = new FileReader();
+
+        reader.onload = function (e){
+            $('#mFileName').attr("src", e.target.result);
+        }
+
+        reader.readAsDataURL(file);
+    });
+
+    // 가입 버튼 클릭 시
+    $('#submitForm').click(()=>{
+        let mAddr = $('#mAddr');
+
+        let addr1 = $('#sample6_postcode').val();
+        let addr2 = $('#sample6_address').val();
+        let addr3 = $('#sample6_detailAddress').val();
+        let addr = `(${addr1}) ${addr2}, ${addr3}`;
+        mAddr.val(addr);
+
+        if(!check_id) {
+            alert('아이디 중복체크를 진행해주세요');
+        } else if(!check_pw || !check_pw2) {
+            alert('비밀번호를 확인해주세요');
+        } else if(!check_nickName) {
+            alert('닉네임 중복체크를 진행해주세요');
+        } else if(!check_phone) {
+            alert('휴대폰 본인인증을 실시해주세요');
+        } else {
+            mJoinForm.submit();
+        }
+
+    });
+
+    // COMPANY
+    //아이디 중복체크
+    $('#cId').keyup(() => {
+        let idVal = $('#cId').val(); //아이디 입력창에 입력한 값
+        let check1 = $('#ccheck1'); //아이디 입력창 아래 있는 <span>태그 (영역)
+
+        //Ajax를 사용해서 아이디 중복체크
+        $.ajax({
+            type: "POST",
+            url: "idCheck",
+            data: {"idVal": idVal},
+            dataType: "text",
+            success: function (result) {
+                if (result == "OK") {
+                    check1.html('사용 가능한 아이디');
+                    check1.css('color', 'blue')
+                    check_id = true;
+                    //이메일 인증
+                } else {
+                    check1.html('사용 불가능 아이디')
+                    check1.css('color', 'red')
+                }
+            },
+            error: function () {
+                alert('idCheck통신 실패!');
+
+            }
+        });
+
+    });
+
+    //비밀번호 정규식
+    $('#cPw').keyup(() => {
+
+        let cPw = $('#cPw').val();
+        let check2 = $('#ccheck2');
+
+        //기본값 -1
+        let num = cPw.search(/[0-9]/); //숫자 입력 여부
+        let eng = cPw.search(/[a-z]/); //영문자 입력 여부
+        let spe = cPw.search(/[~!@#$%^&*]/); //특수문자 입력 여부
+        let spc = cPw.search(/\s/); //공백 입력 여부
+
+        if (cPw.length < 8 || cPw.length > 16) {
+            check2.html('8자리에서 16자리 이내로 입력');
+            check2.css('color', 'red');
+        } else if (spc != -1) {
+            check2.html('공백없이 입력');
+            check2.css('color', 'red');
+        } else if (num == -1 || eng == -1 || spe == -1) {
+            check2.html('영문, 숫자, 특수문자를 혼합해서 입력');
+            check2.css('color', 'red');
+        } else {
+            check2.html('사용가능한 비밀번호');
+            check2.css('color', 'blue');
+            check_pw = true;
+        }
+    });
+
+
+    //비밀번호 입력
+    $('#ccheckPw').keyup(() => {
+        let cPw = $('#cPw').val();
+        let checkPw = $('#ccheckPw').val();
+        let check3 = $('#ccheck3');
+
+        if (cPw == checkPw) {
+            check3.html('비밀번호 일치');
+            check3.css('color', 'blue');
+            check_pw2 = true;
+        } else {
+            check3.html('비밀번호 불일치');
+            check3.css('color', 'red');
+        }
+    });
+
+    // 다음 주소 API
+    function csample6_execDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function (data) {
+                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                var addr = ''; // 주소 변수
+
+                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                    addr = data.roadAddress;
+                } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                    addr = data.jibunAddress;
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById('csample6_postcode').value = data.zonecode;
+                document.getElementById("csample6_address").value = addr;
+                // 커서를 상세주소 필드로 이동한다.
+                document.getElementById("csample6_detailAddress").focus();
+
+            }
+        }).open();
+    }
+
+    //이메일 확인
+
+    let email = $('#cemail');
+    if (!email.val() == '') {
+        check_email = true;
+    }
+
+    // 가입 버튼 클릭 시
+    $('#csubmitForm').click(() => {
+        let cAddr = $('#cAddr');
+
+        let addr1 = $('#csample6_postcode').val();
+        let addr2 = $('#csample6_address').val();
+        let addr3 = $('#csample6_detailAddress').val();
+        let addr = `(${addr1}) ${addr2}, ${addr3}`;
+
+        cAddr.val(addr);
+
+        if (!check_id) {
+            alert('아이디 중복체크를 진행해주세요');
+        } else if (!check_pw || !check_pw2) {
+            alert('비밀번호를 확인해주세요');
+            // } else if (!check_email) {
+            //     alert('이메일 인증을 진행해주세요');
+        } else if(!check_cbsnum) {
+            alert('사업자번호를 확인해주세요');
+        } else {
+            cJoinForm.submit();
+        }
+
+    });
+
+    // 사업자 진위확인 버튼
+    $('#check_cbsnum').click(()=>{
+        let cbsNum = $('#cbsNum').val(); //입력한 값
+        let checkNum = $('#checkNum');
+        console.log('입력한 사업자 번호:');
+        console.log(cbsNum);
+        let data = {
+            "b_no": [cbsNum] // 사업자번호 "xxxxxxx" 로 조회 시,
+        };
+
+        $.ajax({
+            url: "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=T77QIGc7aWpXzvO%2FhhJyhEpsp2zWGB%2FLbRjyZ2Xyv9OBjcGm68Ln71v8Jna3yy0Sya3rDFZV17jkUvJYHGtC%2FA%3D%3D",  // serviceKey 값을 xxxxxx에 입력
+            type: "POST",
+            data: JSON.stringify(data), // json 을 string으로 변환하여 전송
+            dataType: "JSON",
+            contentType: "application/json",
+            accept: "application/json",
+            success: function(result) {
+                console.log(result);
+
+                if(result.data[0].b_stt.slice(-3)=="사업자"){
+                    checkNum.html('사업자등록이 확인 되었습니다.');
+                    checkNum.css('color','blue')
+                    check_cbsnum = true;
+                }else{
+                    checkNum.html('등록되지 않은 사업자 입니다.');
+                    checkNum.css('color','red')
+                    check_cbsnum = false;
+                }
+            },
+            error: function(result) {
+                console.log(result.responseText); //responseText의 에러메세지 확인
+            }
+        });
+    });
+
+    // 사진 미리보기
+    $('#cFile').on("change", function (event){
+
+        let file = event.target.files[0];
+
+        let reader = new FileReader();
+
+        reader.onload = function (e){
+            $('#cFileName').attr("src", e.target.result);
+        }
+
+        reader.readAsDataURL(file);
+    });
+
+</script>
+
+</html>

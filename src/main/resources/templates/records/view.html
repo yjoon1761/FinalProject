@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/cindex.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <script src="/js/company.js"></script>
+
+    <title>진료 내역 상세보기</title>
+</head>
+
+<body>
+<section class="sidebar" th:insert="~{company/sidebar :: sidebarFragment}"></section>
+<section class="recview-big1">
+    <div class="cmain-title2">
+        <h1>진료 내역</h1>
+    </div >
+        <table class="recview-table1">
+            <tr style="height: 50px">
+                <th style="width: 90px">담당의</th>
+                <td>[[${view.RName}]]</td>
+                <th style="width: 90px">강아지 이름</th>
+                <td>[[${view.pet.PName}]]</td>
+                <th >보호자 이름</th>
+                <td>[[${view.pet.member.MName}]]</td>
+            </tr>
+
+            <tr style="height: 50px">
+                <th>생년월일</th>
+                <td>[[${view.pet.PBirth}]]</td>
+                <th>성별</th>
+                <td>[[${view.pet.PGender}]]</td>
+
+                <th>품종</th>
+                <td>[[${view.pet.PKind}]]</td>
+
+            </tr>
+            <tr  style="height: 50px">
+                <th>진료항목</th>
+                <td>[[${view.RCategory}]]</td>
+                <th>진료날짜</th>
+                <td>[[${view.RDate}]]</td>
+                <th >체온</th>
+                <td>[[${view.RTemperature}]]</td>
+            </tr>
+
+            <tr >
+                <th>진료내용</th>
+                <td colspan="6">[[${view.RContent}]]</td>
+            </tr>
+            <tr style="height: 50px;">
+                <th colspan="6">
+                    <button id="recModiForm">수정</button>
+                </th>
+            </tr>
+
+        </table>
+    </section>
+</section>
+<div class="numbering" id="numbering"></div>
+
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script>
+
+    $('#recModiForm').click(()=>{
+        location.href = `/recModiForm/[[${view.rNo}]]`;
+    });
+</script>
+
+</html>

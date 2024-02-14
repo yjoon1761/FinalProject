@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="css/clogin.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <title>Petdical BowWow 기업로그인</title>
+</head>
+
+<body>
+<section class="cloginsection">
+<form action="cLogin2" method="post" name="cLogin2">
+    <div class="cloginform">
+        <div class="clogin-title"><span>PETDICAL BOWWOW</span></div>
+        <fieldset class="cloginfield">
+
+        <legend class="clegend">병원 LOGIN</legend>
+            <br/>
+            <div class="cid">
+        <div>ID</div>
+                <br/>
+        <input type ="text" name="cId" id="cId"/><br/>
+            </div>
+            <br/>
+            <br/>
+            <div class="cpw">
+        <div>PASSWORD</div>
+                <br/>
+        <input type ="password" name="cPw" id="cPw"/>
+            </div>
+        <br/>
+        <div class="csubmit">
+            <input type="button" value="LOGIN" id="logincheck2" />
+        </div>
+
+    </fieldset>
+        <div class="cback">
+            <a href="/">BACK</a>
+        </div>
+    </div>
+</form>
+    <div class="cfind">
+        <h6 class="login_warn" th:if="${loginNum} == -2">아이디 또는 비밀번호를 확인해 주세요</h6>
+        <button id="IdFind">아이디 찾기</button>
+        <button id="PwFind">비밀번호 찾기</button>
+        <button id="join">회원 가입</button>
+    </div>
+
+</section>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script>
+    $('#IdFind').click(()=>{
+        location.href="/cIdForm";
+    });
+
+    $('#PwFind').click(()=>{
+        location.href="/cPwForm";
+    });
+
+    $('#join').click(()=>{
+        location.href = "/mJoinForm";
+    });
+
+    $('#logincheck2').click(()=>{
+        let cId = $('#cId').val();
+        let cPw = $('#cPw').val();
+        console.log(cId, cPw);
+        if(cId.length === 0 && cPw.length === 0){
+            alert('아이디와 비밀번호를 입력해 주세요');
+        } else if(cId.length === 0 && cPw.length > 1) {
+            alert('아이디를 입력해 주세요');
+        } else if(cId.length > 1 && cPw.length === 0) {
+            alert('비밀번호를 입력해 주세요');
+        }  else {
+            cLogin2.submit();
+        }
+    });
+
+    document.getElementById("cPw").addEventListener("keyup", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            document.getElementById("logincheck2").click();
+        }
+    });
+
+</script>
+
+</html>

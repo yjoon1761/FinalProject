@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.icia.petdicalbowwow.dao.ReservationDAO">
+    <select id="rGetDates" parameterType="Integer" resultType="String">
+        SELECT DISTINCT RESDATE FROM RESERVATION WHERE COMNO = ${comNo}
+    </select>
+
+    <select id="rGetTimes" parameterType="resModels" resultType="String">
+        SELECT RESTIME FROM RESERVATION WHERE COMNO = ${comNo} AND RESDATE = '${resDate}'
+    </select>
+</mapper>

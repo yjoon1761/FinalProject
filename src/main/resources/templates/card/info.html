@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/petcard.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="/js/page.js"></script>
+
+    <title>카드 발급 안내 페이지</title>
+</head>
+
+<body onload="infobutton()">
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+<section id="content">
+    <div id="pcboard-title">
+        <h1>BOWOW CARD</h1>
+    </div>
+    <table class="cardregi-form">
+        <div style="width: 1100px; margin: auto;  margin-top: 80px;">
+        <article style="text-align: center">
+        <span style="font-weight: bold; font-size: 40px;">BOWWOW카드를 소개합니다.</span>
+        </article>
+    <div style="width: 280px; height: 150px; margin-top: 80px; margin-left: 420px; background-color: #D94C1A; border-radius: 15px; text-align: center;"><img src="바우와우 카드.png" width="100%" height="100%" style="border-radius: 15px;"></div>
+
+    <article style="width: 1100px; height: 1250px; border: 2px solid sandybrown; border-radius: 30px; padding: 20px; margin: 5% 0; background-color: sandybrown;">
+            <span style="font-size: 40px; font-weight: bold; float: left; color: white;">BOWWOW카드 활용 하기</span>
+            </br>
+            </br>
+            </br>
+            </br>
+        </br>
+        </br>
+        </br>
+        </br>
+        <article style="text-align: center">
+        <span style="font-size: 35px; color: white; font-weight: bold;">PETDIACLBOWWOW와
+                </br>연계된 병원 어디든 나의 펫정보를 쉽게 조회 가능!</span>
+                </br>
+                </br><span style="font-size: 25px; color: white; font-weight: bold;">(처음 가는 병원에서도 나의 펫 정보 및 진료 내역을 조회 할 수 있습니다.)</span>
+    </article>
+                </br>
+                </br>
+                </br>
+                </br>
+        </br>
+        </br>
+        </br>
+        </br>
+        <article style="display: inline-block; width: 700px; margin-left: 50px;">
+            <span style="font-size: 40px; color: white; font-weight: bold;">BOWWOW카드로 간편한 접수!</span>
+            </br><span style="font-size: 25px; color: white; font-weight: bold;">(병원에 찾아가서 접수할 때 병원에서 카드를 태그하면
+            </br>내 강아지 정보로 바로 접수 할 수 있습니다.)</span></article>
+        <article style="display: inline-block; width: 300px;"><img src="https://static.vecteezy.com/system/resources/previews/007/875/114/original/nfc-logo-contactless-wireless-payment-method-through-pos-terminal-icon-isolated-on-white-background-nfc-technology-contact-less-pay-by-mobile-phone-or-credit-card-eps10-vector.jpg" width="250px;" height="200px;" style="border-radius: 30px;"></article>
+        </br>
+        </br>
+        </br>
+        </br>
+        </br>
+        </br>
+        <article style="display: inline-block; width: 300px; margin-left: 50px;"><img src="https://thumb.ac-illust.com/de/de625e0ec8abfdd0cd77b856ff3deb38_t.jpeg" width="300px;" style="border-radius: 30px;"></article>
+
+        <article style="display: inline-block; width: 700px; margin-left: 40px;">
+        <span style="font-size: 30px; color: white; font-weight: bold;">BOWWOW카드만 있다면
+            </br>다른 보호자가 병원을 데려가도
+            </br>펫 정보를 쉽게 조회 가능!</span>
+            </br><span style="font-size: 20px; color: white; font-weight: bold;">(혹시 다른 보호자가 병원에 데려가야 할 경우
+            </br>BOWWOW카드만 있다면 나의 펫 정보 조회가 가능합니다.)</span>
+        </article>
+        </br>
+        </br>
+        </br>
+        </br>
+        </br>
+        </br>
+        <article style="text-align: center">
+            <span style="font-size: 50px; color: white; font-weight: bold;">나의 펫을 위한
+                </br>BOWWOW카드를 만들어 주세요!</span>
+        </article>
+    </article>
+        </div>
+        <tr class="crdinfo">
+            <th style="padding: 30px; text-align: left;">  1. 카드발급 시 개인정보 약관에 동의 해주셔야 발급이 가능합니다.<br/><br/>
+                2. 수집한 개인정보는 카드발급 외에 사용하지 않습니다.<br/><br/>
+                3. 입력된 주소지로 배송되오니 정확한 주소 입력 바랍니다.(아파트일 경우 동, 호수까지 입력)<br/><br/>
+                4. 본 카드는 귀사와 협력 병원에서만 사용 가능한 점 유의바랍니다.<br/><br/>
+                5. 애완견 한마리당 카드 하나씩 사용이 가능합니다.(카드 한개로 여러 마리 사용 불가)<br/><br/>
+                6. 본 카드는 양도 또는 판매가 불가하오니 유의 바랍니다.<br/><br/>
+                7. 카드 분실 시 재발급하여 사용 가능합니다.<br/><br/>
+                8. 카드 발급비용이 발생합니다.(한개당 3,000원)<br/>
+            </th>
+        </tr>
+        <tr style="height: 0px;">
+            <th style="height: 0px;">
+                ※위 안내문 숙지 후 카드 발급 신청바랍니다※
+            </th>
+        </tr>
+        <tr>
+            <td>
+                <p>개인정보 수집 및 이용에 동의하시겠습니까?</p>
+                <input type='checkbox'
+                       name='check'
+                       value='yes'
+                       /> 예
+<!--                onclick='checkOnlyOne(this)'-->
+                <input type='checkbox'
+                       name='check'
+                       value='no'/> 아니오
+                <br/>
+
+                <button id="nextButton" onclick="crdRegiForm()">다음</button>
+            </td>
+        </tr>
+    </table>
+</section>
+
+
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script>
+    // let mno = [[${session.loginNo}]];
+
+    $(document).on('click', "input[type='checkbox']", function() {
+        if (this.checked) {
+            const checkboxes = $("input[type='checkbox']");
+            for (let i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = false;
+            }
+            this.checked = true;
+
+            //만약에 no 체크박스를 누르면
+            if (this.value === 'no') {
+                //alert창이 뜨고
+                alert('동의하지 않으면 카드 발급이 불가능 합니다.');
+                //장애가 참이기 때문에 버튼이 눌리지 않고
+                $("#nextButton").prop("disabled", true);
+            } else {
+                //yes에 체크하면 장애가 틀리면 버튼이 눌리지 않는다.
+                $("#nextButton").prop("disabled", false);
+            }
+        } else {
+            //그것도 아니면(어떠한 체크박스에도 체크가 안되었을 때) 장애가 있기 때문에 틀려서 눌리지 않는다
+            $("#nextButton").prop("disabled", true);
+        }
+    });
+
+    function infobutton(){
+        $("#nextButton").prop("disabled", true);
+    }
+
+    // function crdRegiCheck() {
+    //     $.ajax({
+    //         type: "post",
+    //         url: "/pmList",
+    //         data: {
+    //             "MNO": mno
+    //         },
+    //         dataType: "text",
+    //         success: function (result) {
+    //             console.log(result);
+    //             if (result == "OK") {
+    //                 alert('펫 등록 후 이용할 수 있습니다.');
+    //                 location.href = "/pRegiForm";
+    //             } else {
+    //                 location.href = "/crdRegiForm";
+    //             }
+    //         },
+    //         error: function () {
+    //             alert('로그인 후 이용해주세요!');
+    //         }
+    //     });
+    // }
+
+    function crdRegiForm() {
+        let testId = '[[${session.loginmId}]]'+"1";
+
+        if(testId != '1'){
+            $.ajax({
+                url : "/userPetSelect",
+                type : "post",
+                dataType : "text",
+                success : function (result){
+                    if (result !== "OK"){
+                        location.href = "/crdRegiForm";     // 펫 카드 등록 페이지로 이동
+                    }else {
+                        alert("등록된 펫이 없습니다.");
+                        location.href = "/pRegiForm";
+                    }
+                },
+                error : function (){
+                    alert("userPetSelect 함수 통신 실패");
+                }
+            });
+
+        }else {
+            alert("로그인 후 이용해주세요");
+            location.href = "/";
+        }
+
+    }
+</script>
+
+</html>

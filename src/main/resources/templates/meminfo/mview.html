@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/member.css">
+    <link rel="stylesheet" href="/css/myinfo.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="/js/page.js"></script>
+    <script src="/js/view.js"></script>
+    <script src="/js/company.js"></script>
+    <script src="/js/cancel.js"></script>
+
+
+    <title>[[${session.loginnickname}]]님의 정보보기</title>
+</head>
+
+<body>
+<div id="output"></div>
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+<section id="contentview">
+    <div class="myinfo-side-menu">
+        <ul th:if="${session.loginNo != -1 && session.comNo == -1 && session.loginmId != 'admin'}">
+            <label><li><a th:onclick="'mView(' + ${session.loginNo} + ')'" >내정보</a></li></label>
+            <a onclick="pListForm()" ><li>마이펫</li></a>
+            <a th:onclick="'mRes(' + ${session.loginNo} + ')'"><li>예약 내역</li></a>
+            <a th:onclick="'mBoard(' + ${session.loginNo} + ')'"> <li>내가 쓴 게시물</li></a>
+            <a th:onclick="'mCard(' + ${session.loginNo} + ')'"><li>나의 카드</li></a>
+            <a th:onclick="'mCancel(' + ${session.loginNo} + ')'"><li>회원탈퇴</li></a>
+        </ul>
+        <ul th:if="${session.loginNo == -1 && session.comNo != -1 && session.loginmId != 'admin'}">
+            <a th:onclick="'cView(' + ${session.comNo} + ')'" ><li>내정보</li></a>
+            <a th:onclick="'mBoard(' + ${session.comNo} + ')'"> <li>내가 쓴 게시물</li></a>
+            <a th:onclick="'cCancel(' + ${session.comNo} + ')'"><li>회원탈퇴</li></a>
+        </ul>
+
+        <ul th:if="${session.loginmId == 'admin'}">
+            <a th:onclick="'mView(' + ${session.loginNo} + ')'" ><li>내정보</li></a>
+            <a href="/mListForm"><li>회원목록</li></a>
+            <a href="/cListForm"><li>기업목록</li></a>
+            <a th:onclick="'mBoard(' + ${session.loginNo} + ')'"> <li>내가 쓴 게시물</li></a>
+        </ul>
+    </div>
+
+    <div class="myinfo-main">
+        <div id="modiForm">
+            <div th:if="${view.MOauth eq 'kakaoFirst'}" class="mview-title">
+                <h1>회원정보를 업데이트 해주세요!</h1>
+            </div>
+            <div th:if="${view.MOauth ne 'kakaoFirst'}" class="mview-title">
+                <h1>내정보 상세보기</h1>
+            </div>
+            <table class="mview-table">
+
+                <tr class="mview-section">
+                    <th>아이디</th>
+                    <td th:text="${view.MID}">아이디</td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>이름</th>
+                    <td>[[${view.MName}]]</td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>닉네임</th>
+                    <td>[[${view.NickName}]]</td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>생년월일</th>
+                    <td>[[${view.MBirth}]]</td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>성별</th>
+                    <td>[[${view.MGender}]]</td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>이메일</th>
+                    <td>[[${view.MEmail}]]</td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>연락처</th>
+                    <td>[[${view.MPhone}]]</td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>주소</th>
+                    <td>[[${view.MAddr}]]</td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>프로필 사진</th>
+                    <td><img th:src="@{|/profile/${view.MFileName}|}" width="200px"/>
+                        <br/>[[${view.MFileName}]]</td>
+                </tr>
+
+                <!--      <tr th:if="${session.loginId eq view.MID}" class="mview-section mview-button">-->
+                <tr class="mview-section mview-button">
+                    <th colspan="2">
+                        <button id="modify">수정</button>
+                    </th>
+                </tr>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+    let check_pw = false;
+    let check_pw2 = false;
+    let check_nickName = false;
+    let check_phone = false;
+
+    // id="modify"인 수정 버튼을 클릭시
+    let moauth = `[[${view.MOauth}]]`;
+
+    $('#modify').click(()=> {
+        if (moauth == 'kakaoFirst') {
+            let output = `
+                <form action="/mModify" method="POST" enctype="multipart/form-data" name="modifyForm">
+                <table class="mview-table">
+                <div class="mview-title">
+                <h1>회원 정보 수정</h1>
+                </div>
+
+                <tr class="mview-section">
+                    <th>아이디</th>
+                    <td>[[${view.MID}]]</td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>이름</th>
+                    <td><input type="text" name="mName"/></td>
+                </tr>
+
+                <tr class="mview-section">
+                  <th>닉네임</th>
+                  <td><input type="text" id="nickName" name="nickName"><br/>
+                      <span id="check4"></span></td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>생년월일</th>
+                    <td><input type="date" name="mBirth"/></td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>성별</th>
+                    <td>남성 <input type="radio" name="mGender" value="남성"/>
+                        여성 <input type="radio" name="mGender" value="여성"/></td>
+                </tr>
+
+                <tr class="mview-section">
+                  <th>연락처</th>
+                  <td>
+                    <input id="phone" type="text" name="mPhone" placeholder="전화번호입력"/>
+                    <input type="button" id="phoneCheck" class="doubleCheck" value="인증번호 보내기"/><br/>
+                    <input id="phone2" type="text" name="phone2" title="인증번호 입력" maxlength="4"/>
+                    <input type="button" id="phoneCheck2" class="doubleCheck" value="본인인증"><br/>
+                    <span id="successPhoneCheck">휴대폰 번호 입력후 인증번호 보내기를 해주십시오.</span><br/>
+                    <input type="hidden" id="phoneDoubleCheck"/>
+                  </td>
+                </tr>
+
+                <tr class="mview-section">
+                  <th>이메일</th>
+                  <td>
+                    <input type="email" name="mEmail" id="mEmail" size="25" required/>
+                  </td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>주소</th>
+                    <td>
+                        <input type="text" id="sample6_postcode" placeholder="우편번호" size="25"/>
+                        <input type="button" id="sample6_execDaumPostcode" value="우편번호 찾기" /><br/>
+                        <input type="text" size="40" id="sample6_address" placeholder="주소"/><br/>
+                        <input type="text" size="40" id="sample6_detailAddress" placeholder="상세주소"/>
+                        <input type="hidden" id="mAddr" name="mAddr"/>
+                    </td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>프로필 사진</th>
+                    <td><input type="file" name="mFile" id="mFile"/>
+                        <br/><img id="mFileName" width="150px"/>
+                        <input type="hidden" name="mFileName" value="[[${view.MFileName}]]"/>
+                   </td>
+                </tr>
+                <tr>
+                    <th colspan="2"><input type="button" value="수정" id="submitForm"/></th>
+                </tr>
+                </table>
+                <input type="hidden" name="MNO" value="[[${view.MNO}]]"/>
+                <input type="hidden" name="MID" value="[[${view.MID}]]"/>
+                <input type="hidden" name="mPw" value="[[${view.MPw}]]"/>
+                <input type="hidden" name="mOauth" value="kakao"/>
+            </form>
+            `;
+            $('#modiForm').html(output);
+        } else if(moauth == 'kakao') {
+            let output = `
+                <form action="/mModify" method="POST" enctype="multipart/form-data" name="modifyForm">
+                <table class="mview-table">
+                <div class="mview-title">
+                <h1>회원 정보 수정</h1>
+                </div>
+
+                <tr class="mview-section">
+                    <th>아이디</th>
+                    <td>[[${view.MID}]]</td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>이름</th>
+                    <td><input type="text" name="mName" required size="40" value="[[${view.MName}]]"/></td>
+                </tr>
+
+                <tr class="mview-section">
+                  <th>닉네임</th>
+                  <td><input type="text" id="nickName" name="nickName" value="[[${view.NickName}]]"><br/>
+                      <span id="check4"></span></td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>생년월일</th>
+                    <td><input type="date" name="mBirth" value="[[${view.MBirth}]]"/></td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>성별</th>
+                    <td>남성 <input type="radio" name="mGender" value="남성"/>
+                        여성 <input type="radio" name="mGender" value="여성"/></td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>연락처</th>
+                        <td>[[${view.MPhone}]]</td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>이메일</th>
+                    <td><input type="email" name="mEmail" id="mEmail" size="25" value="[[${view.MEmail}]]"/></td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>주소</th>
+                    <td>
+                        <input type="text" id="sample6_postcode" placeholder="우편번호" size="25"/>
+                        <input type="button" id="sample6_execDaumPostcode" value="우편번호 찾기" /><br/>
+                        <input type="text" size="40" id="sample6_address" placeholder="주소"/><br/>
+                        <input type="text" size="40" id="sample6_detailAddress" placeholder="상세주소"/>
+                        <input type="hidden" id="mAddr" name="mAddr"/>
+                    </td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>프로필 사진</th>
+                    <td><input type="file" name="mFile" id="mFile"/>
+                        <br/><img id="mFileName" src="/profile/[[${view.MFileName}]]" width="150px"/>
+                        <input type="hidden" name="mFileName" value="[[${view.MFileName}]]"/>
+                   </td>
+                </tr>
+
+                <tr class="mview-section mview-button">
+                    <th colspan="2"><input type="button" value="수정" id="submitForm"/></th>
+                </tr>
+                </table>
+                <input type="hidden" name="MNO" value="[[${view.MNO}]]"/>
+                <input type="hidden" name="MID" value="[[${view.MID}]]"/>
+                <input type="hidden" name="mPw" value="[[${view.MPw}]]"/>
+                <input type="hidden" name="mPhone" value="[[${view.MPhone}]]"/>
+                <input type="hidden" name="mOauth" value="kakao"/>
+            </form>
+           `;
+            $('#modiForm').html(output);
+        } else {
+            let output = `
+                <form action="/mModify" method="POST" enctype="multipart/form-data" name="modifyForm">
+                <table class="mview-table">
+                <div class="mview-title">
+                <h1>회원 정보 수정</h1>
+                </div>
+
+                <tr class="mview-section">
+                    <th>아이디</th>
+                    <td>[[${view.MID}]]</td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>비밀번호</th>
+                    <td><input type="password" id="mPw" name="mPw" required size="40"/>
+                        <br/><span id="check2"></span></td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>비밀번호 확인</th>
+                    <td><input type="password" id="checkPw" required size="40"/>
+                        <br/><span id="check3"></span></td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>이름</th>
+                    <td><input type="text" name="mName" required size="40" value="[[${view.MName}]]"/></td>
+                </tr>
+
+                <tr class="mview-section">
+                  <th>닉네임</th>
+                  <td><input type="text" id="nickName" name="nickName" value="[[${view.NickName}]]"><br/>
+                      <span id="check4"></span></td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>생년월일</th>
+                    <td><input type="date" name="mBirth" value="[[${view.MBirth}]]"/></td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>성별</th>
+                    <td>남성 <input type="radio" name="mGender" value="남성"/>
+                        여성 <input type="radio" name="mGender" value="여성"/></td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>연락처</th>
+                        <td>[[${view.MPhone}]]</td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>이메일</th>
+                    <td><input type="email" name="mEmail" id="mEmail" size="25" value="[[${view.MEmail}]]"/></td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>주소</th>
+                    <td>
+                        <input type="text" id="sample6_postcode" placeholder="우편번호" size="25"/>
+                        <input type="button" id="sample6_execDaumPostcode" value="우편번호 찾기" /><br/>
+                        <input type="text" size="40" id="sample6_address" placeholder="주소"/><br/>
+                        <input type="text" size="40" id="sample6_detailAddress" placeholder="상세주소"/>
+                        <input type="hidden" id="mAddr" name="mAddr"/>
+                    </td>
+                </tr>
+
+                <tr class="mview-section">
+                    <th>프로필 사진</th>
+                    <td><input type="file" name="mFile" id="mFile"/>
+                        <br/><img id="mFileName" src="/profile/[[${view.MFileName}]]" width="150px";/>
+                        <input type="hidden" name="mFileName" value="[[${view.MFileName}]]"/>
+                   </td>
+                </tr>
+
+                <tr class="mview-section mview-button">
+                    <th colspan="2"><input type="button" value="수정" id="submitForm"/></th>
+                </tr>
+                </table>
+                <input type="hidden" name="MNO" value="[[${view.MNO}]]"/>
+                <input type="hidden" name="MID" value="[[${view.MID}]]"/>
+                <input type="hidden" name="mPhone" value="[[${view.MPhone}]]"/>
+            </form>
+           `;
+            $('#modiForm').html(output);
+        }
+
+        // 비밀번호 정규식
+        $('#mPw').keyup(() => {
+            let mPw = $('#mPw').val();
+            let check2 = $('#check2');
+
+            // 기본값 -1
+            let num = mPw.search(/[0-9]/);          // 숫자 입력 여부
+            let eng = mPw.search(/[a-z]/);          // 영문자 입력 여부
+            let spe = mPw.search(/[~!@#$%^&*]/);    // 특수문자 입력 여부
+            let spc = mPw.search(/\s/);             // 공백 입력 여부
+
+            if (mPw.length < 8 || mPw.length > 16) {
+                check2.html('8자리에서 16자리 이내로 입력');
+                check2.css('color', 'red');
+            } else if (spc != -1) {
+                check2.html('공백없이 입력');
+                check2.css('color', 'red');
+            } else if (num == -1 || eng == -1 || spe == -1) {
+                check2.html('영문, 숫자, 특수문자를 혼합해서 입력');
+                check2.css('color', 'red');
+            } else {
+                check2.html('사용가능한 비밀번호');
+                check2.css('color', 'blue');
+                check_pw = true;
+            }
+        });
+
+        // 닉네임 중복 체크
+        $('#nickName').keyup(() => {
+            let nickName = $('#nickName').val();
+            let check4 = $('#check4');
+            let spc = nickName.search(/\s/);
+            let MNO = [[${view.MNO}]];
+
+            // Ajax를 사용해서 닉네임 중복체크
+            $.ajax({
+                type : "POST",
+                url : "/mView/" + MNO + "/nickNameCheck",
+                data : { "nickName" : nickName },
+                dataType: "text",
+                success : function(result){
+                    if(nickName.length == 0) {
+                        check4.html('닉네임을 입력해주세요');
+                        check4.css('color', 'lightgray');
+                        check_nickName = false
+                    } else if(spc != -1) {
+                        check4.html('공백 없이 입력해주세요');
+                        check4.css('color', 'red');
+                        check_nickName = false
+                    } else if(result=="OK" && spc==-1){
+                        check4.html('사용 가능한 닉네임');
+                        check4.css('color', 'blue');
+                        check_nickName = true;
+                    } else {
+                        check4.html('사용중인 닉네임');
+                        check4.css('color', 'red');
+                        check_nickName = false;
+                    }
+                },
+                error : function(){
+                    alert('nickNameCheck 통신 실패!');
+                }
+            });
+        });
+
+        // 비밀번호 입력
+        $('#checkPw').keyup(()=>{
+            let mPw = $('#mPw').val();
+            let checkPw = $('#checkPw').val();
+            let check3 = $('#check3');
+            let spc = checkPw.search(/\s/);
+
+            if(checkPw.length == 0) {
+                check3.html('비밀번호 입력');
+                check3.css('color', 'lightgray');
+                check_pw2 = false;
+            } else if(!check_pw) {
+                check3.html('비밀번호를 확인해주세요');
+                check3.css('color', 'red');
+                check_pw2 = false;
+            } else if(spc!=-1){
+                check3.html('공백없이 입력');
+                check3.css('color', 'red');
+                check_pw2 = false;
+            } else if(mPw == checkPw && spc == -1){
+                check3.html('비밀번호 일치');
+                check3.css('color', 'blue');
+                check_pw2 = true;
+            } else {
+                check3.html('비밀번호 불일치');
+                check3.css('color', 'red');
+                check_pw2 = false;
+            }
+        });
+
+        // 휴대폰 본인인증1
+        let phone = $("#phone");
+        let phone2 = $("#phone2");
+        let phoneFormCheck = /^(01[016789]{1})-?[0-9]{3,4}-?[0-9]{4}$/;
+        let successPhoneCheck = $("#successPhoneCheck");
+        let code2 = "";
+        let MNO = [[${view.MNO}]];
+
+        $("#phoneCheck").click(function () {
+            $.ajax({
+                type: "POST",
+                url: "/mView/" + MNO + "/phoneCheck",
+                cache: false,
+                data:{"phone" : phone.val()},
+                success: function (data) {
+                    console.log(data);
+                    console.log(phoneFormCheck.test(phone.val()));
+                    if (phoneFormCheck.test(phone.val()) == false) {
+                        alert("휴대폰 번호가 올바르지 않습니다.");
+                        successPhoneCheck.text("유효한 번호를 입력해주세요.");
+                        successPhoneCheck.css("color", "red");
+                        phone.attr("autofocus", true);
+                    } else {
+                        alert("인증번호 발송이 완료되었습니다.\n휴대폰에서 인증번호를 확인해주세요.");
+                        phone2.attr("disabled", false);
+                        $("#phoneCheck2").css("display", "inline-block");
+                        successPhoneCheck.text("인증번호 입력 후 인증완료를 눌러주세요.");
+                        successPhoneCheck.css("color", "green");
+                        phone.attr("readonly", true);
+                        code2 = data;
+                    }
+                }
+            });
+        });
+
+        // 휴대폰 본인인증2
+        $("#phoneCheck2").click(function () {
+            console.log(phone2.val());
+            console.log(code2);
+            if (phone2.val() == '') {
+                successPhoneCheck.text("인증번호를 입력해주세요.");
+                successPhoneCheck.css("color", "red");
+                $("#phoneDoubleCheck").val("false");
+                $(this).attr("autofocus", true);
+            } else {
+                if (phone2.val() == code2) {
+                    successPhoneCheck.text("인증번호가 일치합니다.");
+                    successPhoneCheck.css("color", "green");
+                    $("#phoneDoubleCheck").val("true");
+                    phone2.attr("disabled", true);
+                    check_phone = true;
+                } else {
+                    successPhoneCheck.text("인증번호가 일치하지 않습니다. 다시 입력해주세요.");
+                    successPhoneCheck.css("color", "red");
+                    $("#phoneDoubleCheck").val("false");
+                    $(this).attr("autofocus", true);
+                }
+            }
+        });
+
+        // 다음 주소 API
+        $('#sample6_execDaumPostcode').click(() => {
+            new daum.Postcode({
+                oncomplete: function (data) {
+                    // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                    // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                    // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                    var addr = ''; // 주소 변수
+
+                    //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                    if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                        addr = data.roadAddress;
+                    } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                        addr = data.jibunAddress;
+                    }
+
+                    // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                    document.getElementById('sample6_postcode').value = data.zonecode;
+                    document.getElementById("sample6_address").value = addr;
+                    // 커서를 상세주소 필드로 이동한다.
+                    document.getElementById("sample6_detailAddress").focus();
+
+                }
+            }).open();
+        });
+
+        // 사진 미리보기
+        $('#mFile').on("change", function (event) {
+
+            let file = event.target.files[0];
+
+            let reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#mFileName').attr("src", e.target.result);
+            }
+
+            reader.readAsDataURL(file);
+        });
+
+        $('#submitForm').click(() => {
+            let mAddr = $('#mAddr');
+
+            let addr1 = $('#sample6_postcode').val();
+            let addr2 = $('#sample6_address').val();
+            let addr3 = $('#sample6_detailAddress').val();
+            let addr = `(${addr1}) ${addr2}, ${addr3}`;
+
+            mAddr.val(addr);
+            /*
+          if(!check_id) {
+            alert('아이디 중복체크를 진행해주세요');
+          } else if(!check_pw || !check_pw2) {
+            alert('비밀번호를 확인해주세요');
+          } else if(!check_email) {
+            alert('이메일 인증을 진행해주세요');
+          } else {
+            mJoinForm.submit();
+          }
+          */
+            if(moauth == 'kakaoFirst') {
+                if(!check_nickName) {
+                    alert('닉네임 중복체크를 진행해주세요');
+                } else if(!check_phone) {
+                    alert('휴대폰 본인인증을 실시해주세요');
+                } else {
+                    modifyForm.submit();
+                }
+            } else if(moauth == 'kakao') {
+                modifyForm.submit();
+            } else {
+                if (!check_pw || !check_pw2) {
+                    alert('비밀번호를 확인해주세요');
+                } else {
+                    modifyForm.submit();
+                }
+            }
+        });
+    });
+
+</script>
+
+</html>

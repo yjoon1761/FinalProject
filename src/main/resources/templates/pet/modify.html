@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/pet.css">
+    <link rel="stylesheet" href="/css/myinfo.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script src="https://kit.fontawesome.com/32dee6c2b4.js" crossorigin="anonymous"></script>
+    <script src="/js/page.js"></script>
+    <script src="/js/view.js"></script>
+
+    <title>펫 등록</title>
+</head>
+<body>
+
+
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+
+<section id="contentview">
+    <div class="myinfo-side-menu">
+        <ul th:if="${session.loginNo != -1 && session.comNo == -1}">
+            <a th:onclick="'mView(' + ${session.loginNo} + ')'" ><li>내정보</li></a>
+            <a onclick="pListForm()" ><li>마이펫</li></a>
+            <a th:onclick="'myres(' + ${session.loginNo} + ')'"><li>예약 내역</li></a>
+            <a th:onclick="'myboard(' + ${session.loginNo} + ')'"> <li>내가 쓴 게시물</li></a>
+            <a th:onclick="'mycard(' + ${session.loginNo} + ')'"><li>나의 카드</li></a>
+            <a th:onclick="'mcancel(' + ${session.loginNo} + ')'"><li>회원탈퇴</li></a>
+        </ul>
+        <ul th:if="${session.loginNo == -1 && session.comNo != -1}">
+            <a th:onclick="'cview(' + ${session.comNo} + ')'" ><li>내정보</li></a>
+            <a th:onclick="'myboard(' + ${session.comNo} + ')'"> <li>내가 쓴 게시물</li></a>
+            <a th:onclick="'mcancel(' + ${session.comNo} + ')'"><li>회원탈퇴</li></a>
+        </ul>
+    </div>
+
+    <div class="myinfo-main">
+        <div class="pmodi">
+    <article id="pboard-content">
+        <div id="pboard-title">
+            <h1>마이펫 수정</h1>
+        </div>
+        <form action="/pModify" method="POST" enctype="multipart/form-data" name="modiForm">
+            <table class="pregi-table">
+
+                <tr class="pregi-section">
+                    <th>이름</th>
+                    <td>
+                        <input type="text" name="pName" th:value="${view.PName}" required size="40"/>
+                    </td>
+                </tr>
+
+                <tr class="pregi-section">
+                    <th>생년월일</th>
+                    <td><input type="date" name="pBirth" required size="40"></td>
+                </tr>
+
+                <tr class="pregi-section">
+                    <th>성별</th>
+                    <td>수컷 <input type="radio" name="pGender" value="수컷"/>
+                        암컷 <input type="radio" name="pGender" value="암컷"/></td>
+                </tr>
+
+                <tr class="pregi-section">
+                    <th>품종</th>
+                    <td id="kinList"></td>
+                </tr>
+
+                <tr class="pregi-section">
+                    <th>키</th>
+                    <td><input type="text" name="pHeight" th:value="${view.PHeight}" required size="40"></td>
+                </tr>
+
+                <tr class="pregi-section">
+                    <th>몸무게</th>
+                    <td><input type="text" name="pWeight" th:value="${view.PWeight}" required size="40"></td>
+                </tr>
+
+                <tr class="pregi-section">
+                    <th>혈액형</th>
+                    <td><select name="pBloodType">
+                        <option value="DEA 1">DEA 1</option>
+                        <option value="DEA 3">DEA 3</option>
+                        <option value="DEA 4">DEA 4</option>
+                        <option value="DEA 5">DEA 5</option>
+                        <option value="DEA 6">DEA 6</option>
+                        <option value="DEA 7">DEA 7</option>
+                        <option value="DEA 8">DEA 8</option>
+                    </select>
+                    </td>
+                </tr>
+
+                <tr class="pregi-section">
+                    <th>중성화 여부</th>
+                    <td>YES<input type="radio" name="pNeutering" value="YES"/>
+                        NO<input type="radio" name="pNeutering" value="NO"/>
+                    </td>
+                </tr>
+
+                <tr class="pregi-section">
+                    <th>알러지</th>
+                    <td>
+                        <div id="allList"></div>
+                    </td>
+                </tr>
+
+                <tr class="pregi-section">
+                    <th>백신 접종 정보</th>
+                    <td>
+                        <div id="vacList"></div>
+                    </td>
+                </tr>
+
+                <tr class="pregi-section">
+                    <th>질병 정보</th>
+                    <td>
+                        <div id="disList"></div>
+                    </td>
+                </tr>
+
+                <tr class="pregi-section">
+                    <th>특이사항</th>
+                    <td>
+                        <textarea name="pContent" cols="60" rows="10" placeholder="특이사항 작성" style="font-size: 15px;"></textarea>
+                    </td>
+                </tr>
+
+                <tr class="pregi-section">
+                    <th>사진</th>
+                    <td><input type="file" name="pFile" id="pFile">
+                        <br/><img id="pFileName" th:src="@{|/profile/${view.PFileName}|}" width="150px";/>
+                        <input type="hidden" name="pFileName" th:value="${view.PFileName}">
+                        <input type="hidden" name="pNo" th:value="${view.PNo}">
+                        <input type="hidden" name="MNO" th:value="${view.member.MNO}">
+                    </td>
+                </tr>
+
+                <tr class="pregi-button pregi-section">
+                    <th colspan="2">
+                        <input type="button" value="수정" id="btnSubmit">
+                        <input type="reset" value="초기화">
+                    </th>
+                </tr>
+            </table>
+        </form>
+    </article>
+        </div>
+    </div>
+</section>
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+
+</body>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
+<script>
+
+    //알러지
+    $.ajax({
+        url: "/allergyList",
+        type: "POST",
+        dataType: "json",
+        success: function (list) {
+            console.log(list);
+            allergyList(list);
+        },
+        error: function () {
+            alert('allergyList 함수 호출 실패!');
+        }
+
+    });
+
+    //checkbox
+    function allergyList(list) {
+        let output = ``;
+
+        output += `해당없음<input type="checkbox" name="pAllergy" value="해당없음">`;
+
+        for (let i in list) {
+            output += `
+                ${list[i].aname}<input type="checkbox" name="pAllergy" value="${list[i].aname}">&ensp;
+            `;
+            if (list[i].ano % 4 === 0) {
+                output += `
+                   <br>
+                    `;
+            }
+        }
+
+        $('#allList').html(output);
+
+    }
+
+    //질병
+    $.ajax({
+        url: "/diseaseList",
+        type: "POST",
+        dataType: "json",
+        success: function (list) {
+            console.log(list);
+            diseaseList(list);
+        },
+        error: function () {
+            alert('diseaseList 함수 호출 실패!');
+        }
+
+    });
+
+    //checkbox
+    function diseaseList(list) {
+        let output = ``;
+
+        output += `해당없음<input type="checkbox" name="pDisease" value="해당없음">`;
+
+        for (let i in list) {
+            output += `
+                ${list[i].dname}<input type="checkbox" name="pDisease" value="${list[i].dname}">&ensp;
+            `;
+            if (list[i].dno % 5 === 0) {
+                output += `
+                   <br>
+                    `;
+            }
+        }
+
+        $('#disList').html(output);
+
+    }
+
+    //백신 접종
+    $.ajax({
+        url: "/vaccineList",
+        type: "POST",
+        dataType: "json",
+        success: function (list) {
+            console.log(list);
+            vaccineList(list);
+        },
+        error: function () {
+            alert('vaccineList 함수 호출 실패!');
+        }
+
+    });
+
+    //checkbox
+    function vaccineList(list) {
+        let output = ``;
+
+        output += `해당없음<input type="checkbox" name="pVaccination" value="해당없음">`;
+
+        for (let i in list) {
+            output += `
+                ${list[i].vname}<input type="checkbox" name="pVaccination" value="${list[i].vname}">&ensp;
+            `;
+            if (list[i].vno % 2 === 0) {
+                output += `
+                   <br>
+                    `;
+            }
+        }
+
+        $('#vacList').html(output);
+
+    }
+
+    //품종
+    $.ajax({
+        url: "/kindList",
+        type: "POST",
+        dataType: "json",
+        success: function (list) {
+            console.log(list);
+            kindList(list);
+        },
+        error: function () {
+            alert('kindList 함수 호출 실패!');
+        }
+
+    });
+
+    //select
+    let kinList = $("#kinList");
+
+    function kindList(list) {
+        let output = "";
+        output += "<select name=";
+        output += "pKind>";
+        output += "<option>품종</option>";
+        for (let i in list) {
+            output += '<option';
+            output += ' value="';
+            output += list[i].kname;
+            output += '">';
+            output += list[i].kname;
+            output += "</option>";
+        }
+        output += "</select>";
+        kinList.html(output);
+    }
+
+    // 사진 미리보기
+    $('#pFile').on("change", function (event) {
+
+        let file = event.target.files[0];
+
+        let reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#pFileName').attr("src", e.target.result);
+        }
+
+        reader.readAsDataURL(file);
+    });
+
+    $('#btnSubmit').click(()=>{
+        let pAllergy = document.getElementsByName("pAllergy");
+        let pAllergyCheck = false;
+        let pDisease = document.getElementsByName("pDisease");
+        let pDiseaseCheck = false;
+        let pVaccination = document.getElementsByName("pVaccination");
+        let pVaccinationCheck = false;
+
+        for(let i in pAllergy){
+            if (pAllergy[i].checked) {
+                pAllergyCheck = true;
+                break;
+            }
+        }
+
+        for(let i in pDisease){
+            if (pDisease[i].checked) {
+                pDiseaseCheck = true;
+                break;
+            }
+        }
+
+        for(let i in pVaccination){
+            if (pVaccination[i].checked) {
+                pVaccinationCheck = true;
+                break;
+            }
+        }
+
+        if(pAllergyCheck){
+            if(pVaccinationCheck){
+                if(pDiseaseCheck){
+                    modiForm.submit();
+                } else {
+                    alert("질병 항목을 선택해주세요.");
+                }
+            } else {
+                alert("백신 항목을 선택해주세요.");
+            }
+        } else {
+            alert("알러지 항목을 선택해주세요.");
+        }
+
+    });
+
+
+</script>
+</html>

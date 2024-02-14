@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/find.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="/js/page.js"></script>
+
+    <title>비밀번호 찾기</title>
+</head>
+
+<body>
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+<section id="content">
+    <article id="find-content">
+        <div id="find-title">
+            <div class="find-container">
+                <h1>비밀번호 찾기</h1>
+            </div>
+        </div>
+
+        <div class="find-container">
+            <div class="find-area">
+                <form action="/cPwModiForm" method="POST" name="cPwFindForm">
+                    <input type="text" id="findPwId" class="pwFind" name="findPwId" placeholder="유저 아이디 입력"
+                           maxlength="50"><br/>
+                    <input type="text" id="findPwEmail" class="pwFind" name="findPwEmail" placeholder="등록 이메일 입력"
+                           maxlength="50">
+                    <div class="btn-find">
+                        <span id="checkEmail"><input type="button" id="btnEmail" value="인증번호 발송"/></span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </article>
+</section>
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+</body>
+
+<script th:src="@{http://code.jquery.com/jquery-latest.min.js}"></script>
+<script>
+    let findPwId = $('#findPwId');
+    let findPwEmail = $('#findPwEmail');
+    let check_id = false;
+    let check_email = false;
+
+    findPwId.keyup(() => {
+        if (findPwId.val().length == 0) {
+            check_id = false;
+        } else {
+            check_id = true;
+        }
+    });
+
+    findPwEmail.keyup(() => {
+        if (findPwEmail.val().length == 0) {
+            check_email = false;
+        } else {
+            check_email = true;
+        }
+    });
+
+    $('#btnEmail').click(() => {
+        if (!check_id) {
+            alert('아이디를 확인해주세요');
+        } else if (!check_email) {
+            alert('이메일을 확인해주세요');
+        } else {
+            let checkEmail = $('#checkEmail');
+            console.log('findPwEmail:');
+            console.log(findPwEmail.val());
+            $.ajax({
+                url: "emailCheckAjax2",
+                type: "POST",
+                data: {
+                    "findPwId": findPwId.val(),
+                    "findPwEmail": findPwEmail.val()
+                },
+                dataType: "text",
+                success: function (result) {
+                    console.log(`result = `, result);
+                    if (result.length == 0) {
+                        alert('조회된 회원이 없습니다. 다시 입력해주세요');
+                    } else {
+                        emailCheck2();
+                    }
+                },
+                error: function () {
+                    alert('emailCheckAjax 함수 통신 실패!');
+                }
+            });
+        }
+    });
+
+    function emailCheck2() {
+        let checkEmail = $('#checkEmail');
+        checkEmail.empty();
+        checkEmail.html(`</br><span style="color:lightgray;">인증번호 발송중입니다. 잠시만 기다려주세요</span>`);
+
+        // ajax를 사용해서 이메일 전송 및 인증번호 받아오기
+        $.ajax({
+            type: "POST",
+            url: "emailCheck2",
+            data: {"findPwEmail": findPwEmail.val()},
+            dataType: "text",
+            success: function (uuid) {
+                console.log(uuid);
+                checkEmail.empty();
+                checkEmail.append(`<input type="text" id="uuid1" placeholder="인증번호 입력"/>`);
+                checkEmail.append(`<input type="button" value="인증" id="btnUUID" data-value="${uuid}"/>`);
+            },
+            error: function () {
+                alert('emailCheck 통신 실패!');
+            }
+        });
+    }
+
+    $(document).on("click", "#btnUUID", function (e) {
+        // 이메일로 전송된 인증번호
+        let uuid = $(this).data("value");
+
+        // 인증창에 입력한 인증번호
+        let uuid1 = $('#uuid1').val();
+
+        console.log(`uuid : ${uuid} | uuid1 : ${uuid1}`);
+
+        if (uuid == uuid1) {
+            alert('이메일 인증 성공! 비밀번호 재설정 페이지로 이동합니다.');
+            cPwFindForm.submit();
+        } else {
+            alert('인증번호를 확인해주세요!');
+            $('#uuid1').val("");
+        }
+    });
+</script>
+
+</html>

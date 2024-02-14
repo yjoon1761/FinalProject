@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/member.css">
+    <link rel="stylesheet" href="/css/myinfo.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="/js/page.js"></script>
+    <script src="/js/view.js"></script>
+    <script src="/js/company.js"></script>
+    <script src="/js/cancel.js"></script>
+
+
+    <title>[[${session.loginnickname}]]님의 정보보기</title>
+</head>
+<body>
+<div id="output"></div>
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+<section id="contentview">
+    <div class="myinfo-side-menu">
+        <ul th:if="${session.loginNo != -1 && session.comNo == -1 && session.loginmId != 'admin'}">
+            <a th:onclick="'mView(' + ${session.loginNo} + ')'" ><li>내정보</li></a>
+            <a onclick="pListForm()" ><li>마이펫</li></a>
+            <a th:onclick="'mRes(' + ${session.loginNo} + ')'"><li>예약 내역</li></a>
+            <a th:onclick="'mBoard(' + ${session.loginNo} + ')'"> <li>내가 쓴 게시물</li></a>
+            <a th:onclick="'mCard(' + ${session.loginNo} + ')'"><li>나의 카드</li></a>
+            <a th:onclick="'mCancel(' + ${session.loginNo} + ')'"><li>회원탈퇴</li></a>
+        </ul>
+        <ul th:if="${session.loginNo == -1 && session.comNo != -1 && session.loginmId != 'admin'}">
+            <a th:onclick="'cView(' + ${session.comNo} + ')'" ><li>내정보</li></a>
+            <a th:onclick="'mBoard(' + ${session.comNo} + ')'"> <li>내가 쓴 게시물</li></a>
+            <a th:onclick="'cCancel(' + ${session.comNo} + ')'"><li>회원탈퇴</li></a>
+        </ul>
+
+        <ul th:if="${session.loginmId == 'admin'}">
+            <a th:onclick="'mView(' + ${session.loginNo} + ')'" ><li>내정보</li></a>
+            <a href="/mListForm"><li>회원목록</li></a>
+            <a href="/cListForm"><li>기업목록</li></a>
+            <a th:onclick="'mBoard(' + ${session.loginNo} + ')'"> <li>내가 쓴 게시물</li></a>
+        </ul>
+    </div>
+
+    <div class="myinfo-main">
+        <div id="modiForm">
+            <div class="mview-title">
+                <h1>내정보 상세보기</h1>
+            </div>
+                <table class="mview-table">
+
+                    <tr class="cview-section">
+                        <th>사업자 번호</th>
+                        <td>[[${view.CbsNum}]]</td>
+                    </tr>
+
+                    <tr class="cview-section">
+                        <th>아이디</th>
+                        <td>[[${view.CId}]]</td>
+                    </tr>
+
+                    <tr class="cview-section" th:if="${session.loginId eq view.CId}">
+                        <th>비밀번호</th>
+                        <td>[[${view.CPw}]]></td>
+                    </tr>
+
+                    <tr class="cview-section">
+                        <th>이름</th>
+                        <td>[[${view.CName}]]</td>
+                    </tr>
+
+                    <tr class="cview-section">
+                        <th>이메일</th>
+                        <td>[[${view.CEmail}]]</td>
+                    </tr>
+
+                    <tr class="cview-section">
+                        <th>연락처</th>
+                        <td>[[${view.CTel}]]</td>
+                    </tr>
+
+                    <tr class="cview-section">
+                        <th>주소</th>
+                        <td>[[${view.CAddr}]]</td>
+                    </tr>
+
+                    <tr class="cview-section">
+                        <th>프로필 사진</th>
+                        <td><img th:src="@{|/profile/${view.CFileName}|}" width="200px"/>
+                            <br/>[[${view.CFileName}]]
+                        </td>
+                    </tr>
+
+                    <!--      <tr th:if="${session.loginId eq view.MID}" class="mview-section mview-button">-->
+                    <tr class="cview-section cview-button">
+                        <th colspan="2">
+                            <button id="modify">수정</button>
+                        </th>
+                    </tr>
+                </table>
+        </div>
+    </div>
+</section>
+
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+    // id="modify"인 수정 버튼을 클릭시
+    $('#modify').click(() => {
+        let output = `
+        <form action="/cModify" method="POST" enctype="multipart/form-data" name="modifyForm">
+        <table class="mview-table">
+        <div class="mview-title">
+        <h1>회원 정보 수정</h1>
+        </div>
+
+            <tr class="cview-section">
+                <th>사업자 번호</th>
+                <td>[[${view.CbsNum}]]</td>
+            </tr>
+
+            <tr class="cview-section">
+                  <th>아이디</th>
+                  <td>[[${view.CId}]]</td>
+            </tr>
+
+        <tr class="cview-section">
+            <th>비밀번호</th>
+            <td><input type="password" id="cPw" name="cPw" required size="40"/>
+                <br/><span id="check2"></span></td>
+        </tr>
+
+        <tr class="cview-section">
+            <th>비밀번호 확인</th>
+            <td><input type="password" id="checkPw" required size="40"/>
+                <br/><span id="check3"></span></td>
+        </tr>
+
+        <tr class="cview-section">
+            <th>이름</th>
+            <td><input type="text" name="cName" required size="40" value="[[${view.CName}]]"/></td>
+        </tr>
+
+        <tr class="cview-section">
+            <th>이메일</th>
+            <td>
+                <input type="email" name="cEmail" id="cEmail" required size="40" value="[[${view.CEmail}]]"/>
+            </td>
+        </tr>
+
+        <tr class="cview-section">
+            <th>연락처</th>
+            <td><input type="text" name="cTel" required size="40" value="[[${view.CTel}]]"/></td>
+        </tr>
+
+        <tr class="cview-section">
+            <th>주소</th>
+            <td>
+                <input type="text" id="sample6_postcode" placeholder="우편번호" size="25"/>
+                <input type="button" onclick="sample6_execDaumPostcode()" value="우편번호 찾기" /><br/>
+                <input type="text" size="40" id="sample6_address" placeholder="주소"/><br/>
+                <input type="text" size="40" id="sample6_detailAddress" placeholder="상세주소"/>
+                <input type="hidden" id="cAddr" name="cAddr"/>
+            </td>
+        </tr>
+
+        <tr class="cview-section">
+            <th>프로필사진</th>
+            <td><input type="file" name="cFile" id="cFile"/>
+                <br/><img id="cFileName" src="/profile/[[${view.CFileName}]]" width="150px;"/>
+                <input type="hidden" name="cFileName" value="[[${view.CFileName}]]"/>
+            </td>
+         </tr>
+
+         <tr class="cview-section cview-button">
+                <th colspan="2"><input type="button" value="수정" id="submitForm"/></th>
+         </tr>
+        </table>
+        <input type="hidden" name="cId" value="[[${view.CId}]]"/>
+        <input type="hidden" name="comNo" value="[[${view.ComNo}]]"/>
+        <input type="hidden" name="cbsNum" value="[[${view.CbsNum}]]"/>
+    </form>
+    `;
+
+        $('#modiForm').html(output);
+
+        let check_pw = false;
+        let check_pw2 = false;
+
+        // 비밀번호 정규식
+        $('#cPw').keyup(() => {
+            let cPw = $('#cPw').val();
+            let check2 = $('#check2');
+
+            // 기본값 -1
+            let num = cPw.search(/[0-9]/);          // 숫자 입력 여부
+            let eng = cPw.search(/[a-z]/);          // 영문자 입력 여부
+            let spe = cPw.search(/[~!@#$%^&*]/);    // 특수문자 입력 여부
+            let spc = cPw.search(/\s/);             // 공백 입력 여부
+
+            if (cPw.length < 8 || cPw.length > 16) {
+                check2.html('8자리에서 16자리 이내로 입력');
+                check2.css('color', 'red');
+            } else if (spc != -1) {
+                check2.html('공백없이 입력');
+                check2.css('color', 'red');
+            } else if (num == -1 || eng == -1 || spe == -1) {
+                check2.html('영문, 숫자, 특수문자를 혼합해서 입력');
+                check2.css('color', 'red');
+            } else {
+                check2.html('사용가능한 비밀번호');
+                check2.css('color', 'blue');
+                check_pw = true;
+            }
+
+        });
+
+        // 비밀번호 입력
+        $('#checkPw').keyup(() => {
+            let cPw = $('#cPw').val();
+            let checkPw = $('#checkPw').val();
+            let check3 = $('#check3');
+
+            if (cPw == checkPw) {
+                check3.html('비밀번호 일치');
+                check3.css('color', 'blue');
+                check_pw2 = true;
+            } else {
+                check3.html('비밀번호 불일치');
+                check3.css('color', 'red');
+            }
+        });
+
+        // 사진 미리보기
+        $('#cFile').on("change", function (event) {
+
+            let file = event.target.files[0];
+
+            let reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#cFileName').attr("src", e.target.result);
+            }
+
+            reader.readAsDataURL(file);
+        });
+
+        // 수정 버튼 클릭 시
+        $('#submitForm').click(() => {
+            let cAddr = $('#cAddr');
+
+            let addr1 = $('#sample6_postcode').val();
+            let addr2 = $('#sample6_address').val();
+            let addr3 = $('#sample6_detailAddress').val();
+            let addr = `(${addr1}) ${addr2}, ${addr3}`;
+
+            cAddr.val(addr);
+
+            if (!check_pw || !check_pw2) {
+                alert('비밀번호를 확인해주세요');
+            } else {
+                modifyForm.submit();
+                alert('수정 완료!')
+
+            }
+
+        });
+    });
+
+    function sample6_execDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function (data) {
+                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                var addr = ''; // 주소 변수
+
+                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                    addr = data.roadAddress;
+                } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                    addr = data.jibunAddress;
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById('sample6_postcode').value = data.zonecode;
+                document.getElementById("sample6_address").value = addr;
+                // 커서를 상세주소 필드로 이동한다.
+                document.getElementById("sample6_detailAddress").focus();
+
+            }
+        }).open();
+    }
+
+</script>
+
+</html>

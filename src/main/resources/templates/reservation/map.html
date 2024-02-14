@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/reserve.css">
+  <script src="/fullcalendar/dist/index.global.js"></script>
+  <script src="/fullcalendar/packages/google-calendar/index.global.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"
+          integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/32dee6c2b4.js" crossorigin="anonymous"></script>
+  <script src="/js/page.js"></script>
+  <title>병원찾기</title>
+</head>
+<body>
+<script type="text/javascript" src="//dapi.Kakao.com/v2/maps/sdk.js?appkey=e2d1523f26d8c8c4a18f90558d9a042e&libraries=services"></script>
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+<section id="content">
+  <div class="res-title">
+    <h1>병원찾기</h1>
+  </div>
+
+  <form action="/rRegiForm" method="POST" enctype="multipart/form-data" name="rMapForm">
+    <div style="margin: auto; width: 700px; height: 500px;">
+      <div id="map" style="width:100%; height:100%;"></div>
+    </div>
+  </form>
+</section>
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+</body>
+<script>
+  let list = [];
+  let infoArr = [];
+
+  $.ajax({
+    url: "cList",
+    type: "POST",
+    dataType: "JSON",
+    success: function (result) {
+      console.log(result);
+      list = result;
+      loadMap();
+    },
+    error: function () {
+      alert('cList 함수 통신 실패');
+    }
+  });
+
+  // ajax result를 list 배열에 담기 위해 함수화
+  function loadMap() {
+    var mapContainer = document.getElementById('map'); // 지도를 표시할 div
+    var mapOption = {
+      center: new kakao.maps.LatLng(37.4432878, 126.663988), // 지도의 중심좌표(icia)
+      level: 4 // 지도의 확대 레벨
+    };
+    // 지도를 생성합니다
+    var map = new kakao.maps.Map(mapContainer, mapOption);
+
+    // 주소-좌표 변환 객체를 생성합니다
+    var geocoder = new kakao.maps.services.Geocoder();
+    // 주소로 좌표를 검색합니다
+    for (let i = 0; i < list.length; i++) {
+      geocoder.addressSearch(list[i].caddr, function (result, status) {
+        // 정상적으로 검색이 완료됐으면
+        if (status === kakao.maps.services.Status.OK) {
+          var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+          // 결과값으로 받은 위치를 마커로 표시합니다
+          var marker = new kakao.maps.Marker({
+            map: map,
+            position: coords,
+            clickable: true
+          });
+
+          // 인포윈도우로 장소에 대한 설명을 표시합니다
+          var infowindow = new kakao.maps.InfoWindow({
+            content: `<div style="width:180px;text-align:center;padding:6px 0;">${list[i].cname}</div>`
+          });
+          infowindow.open(map, marker);
+
+          // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+          var iwContent = `<div style="height: 97px; width: 300px;">
+                            <div style="background-color: rgba(211,211,211,0.6); border-bottom: 1px solid #adadad;">
+                                <h3 style="padding-left: 5px;">${list[i].cname}</h3>
+                            </div>
+                            <div class="img_div" style="display: inline-block; width:70px; height: 70px;">
+                                <img src="/profile/${list[i].cfileName}" alt="회사이미지" style="width: 70px; height: 70px; border: 1px solid #adadad;">
+                            </div>
+                            <div class="com_div" style="font-size: 15px; transform: translateY(-30px); line-height: 23px; display: inline-block;">
+                                <h6 class="h6_addr">${formatAddress(list[i].caddr)}</h6>
+                                <input type="hidden" name="comNo" value=${list[i].comNo}>
+                                <input type="submit" value="예약페이지로">
+                                </div>
+                                `;
+          // removeable 속성을 ture 로 설정하면 인포윈도우를 닫을 수 있는 x버튼이 표시됩니다
+          var iwRemoveable = true;
+
+          // 인포윈도우를 생성합니다
+          let infowindowClicked = new kakao.maps.InfoWindow({
+            content: iwContent,
+            removable: iwRemoveable
+          });
+
+          // 생성한 인포윈도우를 배열에 추가
+          infoArr.push(infowindowClicked);
+
+          // 배열에 담긴 모든 인포윈도우 닫기 함수
+          function closeInfoWindow() {
+            for(let idx=0; idx<infoArr.length; idx++){
+              infoArr[idx].close();
+            }
+          }
+
+          // 마커에 클릭이벤트를 등록합니다
+          kakao.maps.event.addListener(marker, 'click', function () {
+            // 우선 모든 인포윈도우를 닫아주고
+            closeInfoWindow();
+            // 클릭한 마커의 인포윈도우 열기
+            infowindowClicked.open(map, marker);
+          });
+        }
+      });
+    }
+  }
+
+  // 긴 주소를 줄바꿈하여 반환하는 함수
+  function formatAddress(address) {
+    if (address.length > 32) {
+      return address.replace(/(.{32})/g, "$1<br>");
+    } else {
+      return address;
+    }
+  }
+</script>
+</html>

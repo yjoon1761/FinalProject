@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/cindex.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <script src="/js/company.js"></script>
+
+    <title>진료차트</title>
+</head>
+<body>
+<section class="sidebar" th:insert="~{company/sidebar :: sidebarFragment}"></section>
+
+<section style="vertical-align: top; display: inline-block;">
+    <div>
+        <form action="/recRegister" method="POST" enctype="multipart/form-data"  class="recview-big" >
+            <table class="recview-table">
+                <tr style="height: 50px">
+                    <th style="width: 90px">담당의</th>
+                    <td>[[${doctor.dName}]]</td>
+                    <th style="width: 90px">강아지 이름</th>
+                    <td id="listop"></td>
+                    <th >보호자 이름</th>
+                    <td id="listop4"></td>
+                </tr>
+
+                <tr style="height: 50px">
+                    <th>생년월일</th>
+                    <td id="listop1"></td>
+                    <th>성별</th>
+                    <td id="listop2"></td>
+
+                    <th>품종</th>
+                    <td id="listop3"></td>
+
+                </tr>
+                <tr  style="height: 50px">
+                    <th>진료항목</th>
+                    <td><select class="form-control" id="menu" name="rCategory" required>
+                        <option value="" disabled selected>진료항목</option>
+                        <option value="내과">내과</option>
+                        <option value="외과">외과</option>
+                        <option value="질병검사">질병검사</option>
+                        <option value="백신접종">백신접종</option>
+                    </select></td>
+                    <th>진료날짜</th>
+                    <td><input type="text" id="currentDate" name="rDate"/></td>
+                    <th >체온</th>
+                    <td><input type="text" name="rTemperature" maxlength="13"></td>
+                </tr>
+
+                <tr>
+                    <th style="width: 100px">진료내용</th>
+                    <td colspan="6"><textarea name="rContent" class="rtext"></textarea></td>
+                </tr>
+                <tr style="height: 50px">
+                    <th colspan="8"><input type="submit" value="등록" id="submit" /></th>
+                </tr>
+                <input type="hidden" id="rName" name="rName" th:value="${doctor.dName}" />
+                <input type="hidden" id="comNo" name="comNo" th:value="${doctor.company.comNo}" />
+            </table>
+        </form>
+    </div>
+</section>
+<section style="display: inline-block; position: absolute; width: 300px;" >
+    <div style="text-align: center; margin-top: 10px;">
+        <button id="listbtn">예약 내역 확인</button>
+    </div>
+    <div id="resList"></div>
+</section>
+</body>
+</html>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
+<script>
+    let comNo = [[${doctor.company.comNo}]];
+    console.log(`dName : [[${doctor.dName}]], comNo :`, comNo);
+
+    let date = new Date();
+    let year = date.getFullYear();
+    let month = String(date.getMonth() + 1).padStart(2, '0');
+    let nowDate = String(date.getDate()).padStart(2, '0');
+    let todayStr = year + '-' + month + '-' + nowDate;
+    let HH = String(date.getHours()).padStart(2, '0');
+    let mm = String(date.getMinutes()).padStart(2, '0');
+    let timeNow = parseInt(HH + mm);
+    console.log('timeNow =', timeNow);
+
+    $(()=>{
+        $('#currentDate').val(todayStr);
+    });
+
+    let list = [];
+
+    // '2024-01-24'
+    $('#listbtn').click(() => {
+        console.log('todayStr = ',todayStr);
+        $.ajax({
+            url: "/resList",
+            type: "POST",
+            data: {
+                "comNo": comNo,
+                "todayStr": todayStr,
+            },
+            dataType: "json",
+            success: function (list) {
+                rList(list);
+            },
+            error: function () {
+                alert('resList 호출 실패!');
+            }
+
+        });
+
+        function rList(list) {
+            let output = `<tr class="relist">
+                             <th style="border: 1px double black">날짜</th>
+                             <th style="border: 1px double black">시간</th>
+                             <th style="border: 1px double black">강아지</th>
+                             <th style="border: 1px double black">주인</th>
+                           </tr>`;
+
+            for (let i in list) {
+                let resTime = '';
+                let resTimeArr = list[i].resTime.split(':');
+                for(let j = 0; j < resTimeArr.length; j++) {
+                    resTime += resTimeArr[j];
+                }
+                if((parseInt(resTime)) >= (timeNow - 15)) {
+                    console.log(parseInt(resTime));
+                    output += `
+                           <tr class="relist">
+                             <td style="border: 1px solid black">${list[i].resDate}</td>
+                             <td style="border: 1px solid black"><a href="javascript:setResInfo(${list[i].resNo})">${list[i].resTime}</a></td>
+                             <td style="border: 1px solid black">${list[i].pet.pname}</td>
+                             <td style="border: 1px solid black">${list[i].pet.member.mname}</td>
+                           </tr>
+                    `;
+                } else {
+                    console.log(parseInt(resTime));
+                    output += `
+                           <tr class="relist" style="background-color: lightgray;">
+                             <td style="border: 1px solid black;">${list[i].resDate}</td>
+                             <td style="border: 1px solid black;"><a href="javascript:setResInfo(${list[i].resNo})">${list[i].resTime}</a></td>
+                             <td style="border: 1px solid black;">${list[i].pet.pname}</td>
+                             <td style="border: 1px solid black;">${list[i].pet.member.mname}</td>
+                           </tr>
+                    `;
+                }
+            }
+            $('#resList').html(output);
+        }
+    });
+
+    output = ``;
+    function setResInfo(resNo) {
+        $.ajax({
+            url: "/rList2",
+            type: "post",
+            dataType: "json",
+            data: {"resNo": resNo},
+            success: function (result) {
+                console.log(result);
+                list2(result);
+            },
+            error: function () {
+                alert('pList함수 호출 실패!');
+            }
+        });
+    }
+
+    function list2(list) {
+        let output = "";
+        let output1 = "";
+        let output2 = "";
+        let output3 = "";
+        let output4 = "";
+
+        output += `
+            <td style="border: none; text-align: center;">${list.pet.pname}</td>
+
+        `;
+        output1 += `
+            <td style="border: none; text-align: center;">${list.pet.pbirth}</td>
+        `;
+        output2 += `
+            <td style="border: none; text-align: center;">${list.pet.pgender}</td>
+        `;
+        output3 += `
+            <td style="border: none; text-align: center;">${list.pet.pkind}</td>
+            <input type="hidden" id="pNo" name="pNo" value="${list.pet.pno}">
+        `;
+        output4 += `
+            <td style="border: none; text-align: center;">${list.pet.member.mname}</td>
+        `;
+
+        $('#listop').html(output);
+        $('#listop1').html(output1);
+        $('#listop2').html(output2);
+        $('#listop3').html(output3);
+        $('#listop4').html(output4);
+    }
+</script>

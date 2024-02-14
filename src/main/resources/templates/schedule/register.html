@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/cindex.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script src="/fullcalendar/dist/index.global.js"></script>
+    <script src="/fullcalendar/packages/google-calendar/index.global.js"></script>
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin= "anonymous"></script>
+    <script src="/js/company.js"></script>
+
+    <title>휴일 관리</title>
+</head>
+<body>
+<section class="sidebar" th:insert="~{/company/sidebar :: sidebarFragment}"></section>
+<section class="calendar-section">
+    <div class="calendar-title">
+        <h1>휴일 관리</h1>
+    </div>
+    <hr class="header_line">
+    <div id='calendar'></div>
+</section>
+</body>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script>
+    let dateList = [];
+    let date = new Date();
+    let year = String (date.getFullYear());
+    let month = String (date.getMonth()+1).padStart(2, "0");
+    let nowDate = String(date.getDate()).padStart(2, '0');
+    let today = year + month + nowDate;
+    let todayStr = year + '-' + month + '-' + nowDate;
+    let todayNum = Number (today);
+    let timeArr = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
+    let reservationList;
+    let comNo = [[${session.comNo}]];
+    console.log('comNo = ', comNo);
+
+    document.addEventListener('DOMContentLoaded', function() {  // 페이지 로드시 실행되는 함수
+        $(()=> {
+            $.ajax({
+                url: "sReady",
+                type: "POST",
+                data: {"comNo": [[${session.comNo}]]},
+                dataType: 'text',
+                success: function (list) {
+                    let eventList = JSON.parse(list);
+                    for(let i = 0; i < eventList.length; i++) {
+                        let splitDate = eventList[i]["splitDate"];
+                        if(splitDate > todayNum) {
+                            // eventList[i].display = 'background';
+                            calendar.addEvent(eventList[i]);
+                        }
+                    }
+                },
+                error: function () {
+                    alert('sReady 함수 통신 실패');
+                }
+            });
+            $.ajax({
+                url: "rReady",
+                type: "POST",
+                data: {"comNo": [[${session.comNo}]]},
+                dataType: 'text',
+                success: function(list) {
+                    reservationList = JSON.parse(list);
+                    console.log(reservationList);
+
+                    // key값 : Object.keys(객체)[i]
+                    // 크기 : Object.keys(객체).length
+                    for(let i = 0; i < Object.keys(reservationList[0]).length; i++) {
+                        let keys = Object.keys(reservationList[0])[i];
+                        let keysArr = keys.split('-');
+                        let keysStr = '';
+                        for(let j = 0; j < keysArr.length; j++) {
+                            keysStr += keysArr[j];
+                        }
+                        let arrLength = reservationList[0][keys].length;
+                        if(parseInt(keysStr) > todayNum && arrLength !== 0) {
+                            calendar.addEvent({
+                                title: '예약일정이 있습니다',
+                                start: keys,
+                                end: keys,
+                                overlap: false,
+                                display: 'background',
+                                backgroundColor: '#145adc'
+                            });
+                        }
+                    }
+                },
+                error: function() {
+                    alert('rReady 함수 통신 실패');
+                }
+            });
+            calendar.addEvent({
+                start: '2024-01-01',
+                end: todayStr,
+                overlap: false,
+                display: 'background',
+                backgroundColor: 'lightgray'
+            });
+        });
+        var calendarEl = document.getElementById('calendar'); // body 태그의 <div id='calendar'> 자체를 변수 calendarEI에 대입
+        var calendar = new FullCalendar.Calendar(calendarEl, {  // <div id='calendar'> 태그에 추가할 설정을 변수 calendar를 통해 대입
+            timeZone: 'local',
+            locale: 'kr',
+            // initialDate: '2024-01-01',
+            navLinks: false,   // can click day/week names to navigate views
+            selectable: true, // 선택 및 드래그로 다중 선택 가능
+            selectMirror: false,
+            weekends: true, // 주말 표시
+            googleCalendarApiKey: 'AIzaSyCSLh61abmvs-sBDsMgEOGSqiO-KBeVZSc',
+            eventSources: [
+                {
+                    googleCalendarId: 'bw02203@naver.com',
+                },
+                {
+                    googleCalendarId:'ko.south_korea.official#holiday@group.v.calendar.google.com',
+                    backgroundColor: '#dc143c',
+                    display: 'background'
+                }
+                // 이벤트 추가
+                // events: [
+                //   {
+                //     // title: 'Click for Google',
+                //     // url: 'http://google.com/',
+                //     start: '2023-01-28',
+                //     end: '2023-01-28',
+                //     allDay: true
+                //   }
+                // ]
+            ],
+            customButtons: {
+                indexBtn:{
+                    text: 'Index',
+                    click: function() {
+                        location.href = '/';
+                    }
+                },
+                saveBtn: {
+                    text: 'Save',
+                    click: function() {
+                        if(confirm('일정을 업데이트 하시겠습니까?')) {
+                            dateList = [];
+                            for(let i = 0; i < calendar.getEvents().length; i++) {
+                                if((calendar.getEvents(0)[i]["url"]).length === 0 && (calendar.getEvents(0)[i]["title"] !== '예약마감' && calendar.getEvents(0)[i]["title"] !== '예약일정이 있습니다')) {
+                                    let myDate = calendar.getEvents(0)[i]["startStr"];
+                                    dateList.push(myDate);
+                                }
+                            }
+                            console.log(dateList);
+                            $.ajax({
+                                url: "sRegister",
+                                type: "POST",
+                                contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                                traditional: true, // ajax 배열 넘기기 옵션
+                                data: {
+                                    "dateList": dateList,
+                                    "comNo":[[${session.comNo}]]
+                                },
+                                dateType: 'JSON',
+                                success: function(result) {
+                                    console.log(result);
+                                    window.location.reload();
+                                },
+                                error: function() {
+                                    alert('sRegister 함수 통신 실패!');
+                                }
+                            });
+                        }
+                    }
+                }
+            },
+            headerToolbar: {  // 헤더부분에 나타나는 메뉴
+                left: 'prev,next saveBtn',  // prev,next : 월(month) 이동 버튼. today : 오늘 날짜로 이동
+                center: 'title',  // 캘린더 제목
+                right: 'today'  // 차례대로 월(month), 주(week), 일(day)
+            },
+            // 날짜 선택 시 호출되는 함수
+            select: function(arg) {
+                let cnt = 0;
+                let arr = arg.startStr.split('-');
+                let selectedDate = '';
+                for(let i = 0; i < arr.length; i++) {
+                    selectedDate += arr[i];
+                }
+                console.log(selectedDate);
+                for(let i = 0; i < calendar.getEvents().length; i++) {
+                    if(arg.startStr === calendar.getEvents(0)[i]["startStr"]) {
+                        // 이벤트 재등록 방지를 위한 cnt
+                        cnt = 1;
+                    }
+                }
+                if(selectedDate > todayNum && cnt !== 1) {
+                    calendar.addEvent({     // 이벤트(일정) 추가
+                        title: '휴무일',
+                        start: arg.start,     // select한 시작 날짜
+                        end: arg.end,         // select한 마지막 날짜
+                        allDay: arg.allDay,   // 기본으로 하루종일 설정
+                        backgroundColor: 'orange',
+                    })
+                }
+            },
+            eventClick: function(arg) {
+                // console.log(arg.event.url);  // 해당 이벤트의 url 값
+                if(arg.event.url.length == 0) {
+                    if (confirm('등록된 일정을 삭제하시겠습니까?')) {
+                        arg.event.remove()
+                        console.log('dateList:', dateList);
+                    }
+                }
+            },
+            dateClick: function(arg) {
+            },
+            editable: true,
+            dayMaxEvents: true // allow "more" link when too many events
+        });
+        calendar.render();
+    });
+</script>
+</html>

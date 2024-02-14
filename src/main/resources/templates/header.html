@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="shortcut icon" href="/favicon/favicon.ico" type="image/x-icon">
+    <script src="https://kit.fontawesome.com/32dee6c2b4.js" crossorigin="anonymous"></script>
+    <script src="/js/page.js"></script>
+
+    <title></title>
+</head>
+
+<body>
+<div th:fragment="headerFragment">
+    <ul>
+        <a href="/"><h1 class="main-title">Petdical BowWow</h1></a>
+    </ul>
+    <div id="menu">
+        <hr class="header_line">
+        <ul class="main1">
+            <li th:if="${session.loginmId eq null && session.logincId eq null}"><a onclick="pRegiForm(1)">마이펫</a>
+            <li th:if="${session.loginmId eq null && session.logincId ne null}"><a onclick="pRegiForm(2)">마이펫</a>
+            <li th:if="${session.loginmId ne null && session.logincId eq null}"><a onclick="pRegiForm(3)">마이펫</a>
+                <ul class="main2">
+                    <li><a href = "/pRegiForm">펫등록</a></li>
+                    <li><a href = "/pListForm">펫정보</a></li>
+                    <li><a href = "/recList" id="mChartList">진료내역</a></li>
+                </ul>
+            </li>
+
+            <li th:if="${session.loginmId eq null && session.logincId eq null}"><a onclick="rResForm(1)">병원예약</a>
+            <li th:if="${session.loginmId eq null && session.logincId ne null}"><a onclick="rResForm(2)">병원예약</a>
+            <li th:if="${session.loginmId ne null && session.logincId eq null}"><a onclick="rResForm(3)">병원예약</a>
+
+            <li><a onclick="bList(1)">게시판</a>
+                <ul class="main2">
+                    <li><a onclick="bList(1)">정보마당</a></li>
+                    <li><a onclick="bList(2)">갤러리</a></li>
+                    <li><a onclick="bList(3)">Q&A</a></li>
+                </ul>
+            </li>
+            <li><a href = "/crdInfoForm">펫카드</a>
+                <ul class="main2">
+                    <li><a href = "/crdInfoForm">카드발급</a></li>
+                    <li><a href = "/mCard">카드목록</a></li>
+                </ul>
+            </li>
+
+            <li><a href = "/cService">고객센터</a></li>
+            <li th:if="${session.loginmId == 'admin'}"><a href = "/crdUpdateForm">카드 주문 내역</a></li>
+            <li th:if="${session.logincId ne null && session.loginmId eq null}"><a href = "/cIndexForm" style="color: #2525c4"><img src="/img/회사로고.png" style="width: 25px; height: 25px;" > 기업 페이지</a></li>
+            <li th:if="${session.loginmId eq null && session.logincId eq null}"><a href = "/cLoginForm" style="color: #2525c4"><img src="/img/회사로고.png" style="width: 25px; height: 25px;" > 기업 페이지</a></li>
+        </ul>
+    </div>
+
+</div>
+
+</body>
+
+<script th:src="@{http://code.jquery.com/jquery-latest.min.js}"></script>
+<script>
+</script>
+
+</html>

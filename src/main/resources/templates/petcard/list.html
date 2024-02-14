@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/petcard.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="/js/page.js"></script>
+
+    <title>펫디컬 바우와우</title>
+
+</head>
+
+<body>
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+
+<section id="content">
+    <article class="pcboard-content">
+        <div id="pcboard-title">
+            <h1>펫 카드 목록</h1>
+        </div>
+
+        <table class="pclist-table">
+            <thead>
+                <tr>
+                    <th class="th-pcid">카드 ID</th>
+                    <th class="th-pname">강아지 이름</th>
+                    <th class="th-name">이름</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>1234</td>
+                    <td>삼식이</td>
+                    <td>icia</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </article>
+</section>
+
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+</body>
+
+<script th:src="@{http://code.jquery.com/jquery-latest.min.js}"></script>
+<script>
+
+</script>
+
+</html>
+

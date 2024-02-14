@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/petcard.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="/js/page.js"></script>
+
+    <title>카드 발급 안내 페이지</title>
+</head>
+
+<body onload="infobutton()">
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+<section id="content">
+<div id="pcboard-title">
+    <h1>펫카드 발급 안내문</h1>
+</div>
+       <table class="cardregi-form">
+           <tr class="">
+               <th><img src="/img/카카오로그인.png" style="width: 300px;"></th>
+               <th>  1. 카드발급 시 개인정보 약관에 동의 해주셔야 발급이 가능합니다.<br/><br/>
+                   2. 수집한 개인정보는 카드발급 외에 사용하지 않습니다.<br/><br/>
+                   3. 입력된 주소지로 배송되오니 정확한 주소 입력 바랍니다.(아파트일 경우 동, 호수까지 입력)<br/><br/>
+                   4. 본 카드는 귀사와 협력 병원에서만 사용 가능한 점 유의바랍니다.<br/><br/>
+                   5. 애완견 한마리당 카드 하나씩 사용이 가능합니다.(카드 한개로 여러 마리 사용 불가)<br/><br/>
+                   6. 본 카드는 양도 또는 판매가 불가하오니 유의 바랍니다.<br/><br/>
+                   7. 카드 분실 시 재발급하여 사용 가능합니다.<br/><br/>
+                   8. 카드 발급비용이 발생합니다.(한개당 3,000원)<br/><br/>
+                   ※위 안내문 숙지 후 카드 발급 신청바랍니다※<br/>
+               </th>
+           </tr>
+           <tr>
+               <td colspan="2">
+                   <p>개인정보 수집 및 이용에 동의하시겠습니까?</p>
+                   <input type='checkbox'
+                          name='check'
+                          value='yes'
+                          onclick='checkOnlyOne(this)'/> 예
+                   <input type='checkbox'
+                          name='check'
+                          value='no'
+                          onclick='checkOnlyOne(this)'/> 아니오
+                   <br/>
+
+                   <button id="nextButton" onclick="crdRegiForm()">다음</button>
+               </td>
+           </tr>
+       </table>
+    </section>
+
+
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script>
+    $(document).on('click', "input[type='checkbox']", function() {
+        if (this.checked) {
+            const checkboxes = $("input[type='checkbox']");
+            for (let i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = false;
+            }
+            this.checked = true;
+
+            //만약에 no 체크박스를 누르면
+            if (this.value === 'no') {
+                //alert창이 뜨고
+                alert('동의하지 않으면 카드 발급이 불가능 합니다.');
+                //장애가 참이기 때문에 버튼이 눌리지 않고
+                $("#nextButton").prop("disabled", true);
+            } else {
+                //yes에 체크하면 장애가 틀리면 버튼이 눌리지 않는다.
+                $("#nextButton").prop("disabled", false);
+            }
+        } else {
+            //그것도 아니면(어떠한 체크박스에도 체크가 안되었을 때) 장애가 있기 때문에 틀려서 눌리지 않는다
+            $("#nextButton").prop("disabled", true);
+        }
+    });
+
+    function infobutton(){
+        $("#nextButton").prop("disabled", true);
+    }
+</script>
+
+</html>

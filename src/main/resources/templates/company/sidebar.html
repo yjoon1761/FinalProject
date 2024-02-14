@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="css/cindex.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <title></title>
+</head>
+
+<body>
+<div class="left_sub_menu" th:fragment="sidebarFragment">
+
+    <a href="/" target="blank" style="margin: 20px;"><h4 style="font-family: 'FontAwesome',serif;color: mediumvioletred;">← Petdical Bowwow</h4></a>
+
+    <a href="/cIndexForm"><h3 style="text-align: center; color: #D94C1A; margin: 20px;">[[${session.cName}]]</h3></a>
+    <div class="sub_menu">
+        <div class="menu">
+            <ul class="big_menu">
+                <a href = "/cIndexForm"><li>예약 내역</li></a>
+            </ul>
+            <ul class="big_menu">
+                <li>차트관리</li>
+                <ul class="small_menu">
+                    <a onclick="recRegiForm()"><li>차트 작성</li></a>
+                    <a href="/crecList"><li>차트 기록</li></a>
+                </ul>
+            </ul>
+            <ul class="big_menu">
+                <li>마이페이지</li>
+                <ul class="small_menu">
+                    <a href="/dRegiForm"><li>의사등록</li></a>
+                    <a href="/dListForm"><li>의사목록</li></a>
+                    <a href="/sRegiForm"><li>휴일관리</li></a>
+                </ul>
+            </ul>
+        </div>
+
+    </div>
+</div>
+</body>
+
+<script th:src="@{http://code.jquery.com/jquery-latest.min.js}"></script>
+<script>
+</script>
+
+</html>

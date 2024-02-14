@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/board.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="/js/page.js"></script>
+
+    <title>펫디컬 바우와우</title>
+
+</head>
+
+<body>
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+
+<section id="content">
+    <article class="board-content">
+        <div id="board-title">
+            <h1>카드 등록 페이지</h1>
+        </div>
+
+        <div class="crdlist">
+            <!-- 카드키 값 -->
+            <h1>※등록 할 카드를 리더기에 찍어주세요</h1>
+            <h2>등록키 : <span id="keyValue"></span></h2>
+
+            <!-- 주문자 개수 변경 -->
+            <select id="limit">
+                <option value="10">10개씩</option>
+                <option value="15">15개씩</option>
+                <option value="20">20개씩</option>
+            </select>
+            </br>
+        </div>
+
+        </br>
+        <div class="board-foot">
+            <div id="crdList"></div>
+            <div id="output"></div>
+            <div class="numbering" id="numbering"></div>
+        </div>
+
+    </article>
+</section>
+
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+</body>
+
+<script th:src="@{http://code.jquery.com/jquery-latest.min.js}"></script>
+<script>
+
+    let page = 1;       // 목록의 페이지 번호 (시작페이지 1)
+    let limit = 10;      // 한 페이지에 출력될 목록의 개수
+    const block = 5;    // 한 페이지에 출력될 번호의 개수
+    let count = 0;      // 목록의 총 개수
+    let list = [];      // 목록을 담기 위한 배열
+    let keyVal;
+
+    $(() => {
+        $.ajax({
+            url: "/crdCheckList",
+            type: "post",
+            dataType: "json",
+            success: function (result) {
+                console.log(result);
+                list = result;
+                pagingList(page, list);
+                console.log(list);
+            },
+            error: function () {
+                alert('crdCheckList 호출 실패!');
+            }
+        });
+    });
+
+    $('#limit').change(()=>{
+        page = 1;
+        limit = Number($('#limit').val());
+        pagingList(page, list);
+    });
+
+    // 검색한 목록 출력
+    $('#btnSearch').click(()=>{
+        let category = $('#category').val();
+        let keyword = $('#keyword').val();
+
+        $.ajax({
+            url : "bSearchList",
+            type : "post",
+            data : {
+                "category" : category,
+                "keyword" : keyword
+            },
+            dataType : "json",
+            success : function(result){
+                console.log(result);
+                list = result;
+                pagingList(page, list);
+            },
+            error : function (){
+                alert('bSearchList함수 호출 실패!');
+            }
+        });
+    });
+
+
+    // 리스트 출력 함수
+    function pagingList(page, list){
+        count = list.length;
+
+        console.log(`page# : ${page}` );
+        console.log(`count# : ${count}` );
+
+        let maxPage = Math.ceil(count/limit);
+
+        if(page > maxPage){
+            if(maxPage==0){
+                maxPage = 1;
+            }
+
+            page = maxPage;
+        }
+
+        let startRow = (page - 1) * limit;
+        let endRow = page * limit - 1;
+
+        if(endRow >= count){
+            endRow = count-1;
+        }
+
+        let startPage = ((Math.ceil(page/block))-1) * block + 1;
+        let endPage = startPage + block - 1;
+
+        if(endPage > maxPage){
+            endPage = maxPage;
+        }
+
+        output = ``;
+
+        output += `<div id="board-list">
+                <div class="board-container">
+                <table class="board-table">
+                    <thead>
+                        <th class="th-no">발급자 이름</th>
+                        <th class="th-no">연락처</th>
+                        <th class="th-no">주소</th>
+                    </thead>
+                <tbody>`;
+
+        for(let i=startRow; i<=endRow; i++){
+            output += `
+                <tr>
+                    <td><a href="#" onclick="crdResult(${list[i].crdNo}, ${list[i].pet.pno})">${list[i].crdName}</td>
+                    <td>${list[i].crdPhone}</td>
+                    <td>${list[i].crdAddr}</td>
+                </tr>
+            `;
+        }
+
+        output += `</tbody>
+                        </table>
+                         </div>
+                        </div>`;
+
+        $('#crdList').html(output);
+
+        let pageNums = [];
+        let prev = (page-1 < 1 ? 1 : page-1);
+        let next = (page+1 >= maxPage ? maxPage : page+1)
+
+        // [이전]
+        if(page<=1){
+            pageNums.push(` < `);
+        } else {
+            pageNums.push(`<a class="page-prev" href="#" data-page=${prev}> < </a>`);
+        }
+
+        // [페이지번호]
+        for(let i=startPage; i<=endPage; i++){
+            if(page==i){
+                pageNums.push(` ${i} `);
+
+            } else {
+                pageNums.push(`<a class="iNum" href="#" data-page=${i}> ${i} </a>`);
+            }
+        }
+
+        // [다음]
+        if(page>=maxPage){
+            pageNums.push(` > `);
+        } else {
+            pageNums.push(`<a class="page-next" href="#" data-page=${next}> > </a>`);
+        }
+
+        $('#numbering').html(pageNums);
+
+        // [이전], [페이지번호], [다음]을 클릭시
+        $('#numbering a').click(function(e){
+            page = parseInt($(this).data('page'));
+            console.log(`click page# : ${page}`);
+
+            pagingList(page, list);
+        });
+
+    }
+
+    $(function keyCheck() {
+        $.ajax({
+            url: '/keyCheck',
+            type: 'post',
+            dataType: 'text',
+            success: function(result) {
+                keyVal = result;
+                let keyValue = $('#keyValue');
+                keyValue.html(result);
+                setTimeout(keyCheck, 500);
+            },
+            error: function() {
+                alert('카드를 리더기에 찍아주세요.');
+            }
+        });
+    });
+
+    function crdResult(crdNo, pNo){
+        if (keyVal !== ""){
+            $.ajax({
+                url: "/crdUpdate",
+                type: "post",
+                data : {
+                    "crdNo" : crdNo,
+                    "pNo" : pNo,
+                    "keyValue" : keyVal
+                },
+                success : function (result){
+                    alert("업데이트 성공!");
+                    keyVal = "";
+                    let keyValue = $('#keyValue');
+                    keyValue.html(keyVal);
+                    list = result;
+                    pagingList(page, list);
+                    location.reload();
+                },
+                error : function (){
+                    alert("crdUpdate 호출 실패!");
+                }
+            });
+        } else {
+            alert("카드를 먼저 태그해주세요");
+        }
+
+    }
+</script>
+
+</html>
+

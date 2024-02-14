@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.icia.petdicalbowwow.dao.MemberDAO">
+    <select id="mSearchList" parameterType="search" resultType="member">
+        SELECT * FROM MEMBER WHERE ${category} LIKE '%${keyword}%'
+    </select>
+
+    <select id="mIdFind" parameterType="String" resultType="String">
+        SELECT MID FROM MEMBER WHERE MEMAIL = '${findIdEmail}' AND MPHONE = '${findIdPhone}'
+    </select>
+
+    <select id="mIdFind2" parameterType="String" resultType="String">
+        SELECT MID FROM MEMBER WHERE MID = '${findPwId}' AND MEMAIL = '${findPwEmail}'
+    </select>
+</mapper>

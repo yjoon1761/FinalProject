@@ -1,0 +1,38 @@
+#find-title h1 {
+    text-align: center;
+    color: brown;
+    margin-bottom: 20px;
+    font-size: 30px;
+}
+
+.find-container {
+    width: 500px;
+    margin: auto;
+    text-align: center;
+}
+
+.find-area {
+
+}
+
+.find-area input {
+    width: 400px;
+    height: 40px;
+    border-radius: 4px;
+    border: 1px solid sandybrown;
+    margin: 5px;
+}
+
+.btn-find input {
+    width: 160px;
+    height: 35px;
+    margin: 25px;
+    background-color: sandybrown;
+    border-radius: 40px;
+    border: 1px solid black;
+    text-align: center;
+}
+
+.btn-find {
+    transform: translateY(-10px);
+}

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/blist2.css">
+    <link rel="stylesheet" href="/css/glist2.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="js/page.js"></script>
+
+    <title>펫디컬 바우와우</title>
+</head>
+
+<body>
+
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+
+<section id="content">
+    <article class="top-content">
+        <section class="banner">
+            <article class="banner-list">
+                <div class="sub-banner fade active">
+                    <a href = "/"><img th:src="@{img/배너3.png}" alt=""/></a>
+                </div>
+
+                <div class="sub-banner fade">
+                    <a href="/crdInfoForm"><img th:src="@{img/배너1.png}" alt=""/></a>
+                </div>
+                <a class="prev" onclick="prevSlide()">&#10094;</a>
+                <a class="next" onclick="nextSlide()">&#10095;</a>
+            </article>
+        </section>
+
+        <section class="login-section">
+            <article id="login" th:insert="~{/member/login :: loginFragment}"></article>
+        </section>
+    </article>
+
+    <article class="bottom-content">
+        <section class="board">
+            <h4 style="text-align: center">정보마당</h4>
+            <table class="board-table">
+                <thead>
+                <tr>
+                    <th class="th-no">작성일</th>
+                    <th class="th-title">제목</th>
+                    <th class="th-date">작성자</th>
+                    <th class="th-hit">조회수</th>
+                </tr>
+                </thead>
+
+                <tbody id="bdList"></tbody>
+
+            </table>
+        </section>
+
+        <section class="gallery">
+            <h4 style="margin-left: 300px;">갤러리</h4>
+            <div id="container">
+                <div id="gaList"></div>
+            </div>
+        </section>
+
+    </article>
+</section>
+
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+
+</body>
+
+<script th:src="@{http://code.jquery.com/jquery-latest.min.js}"></script>
+<script>
+    // function rResForm(x) {
+    //     console.log('x = ', x);
+    //     if(x === 1) {
+    //         alert('로그인 후 이용가능합니다');
+    //     } else if(x === 2) {
+    //         alert('기업회원은 이용할 수 없는 메뉴입니다')
+    //     } else if(x === 3) {
+    //         location.href = "/rResForm";
+    //     }
+    // }
+    //
+    // function pRegiForm(x) {
+    //     console.log('x = ', x);
+    //     if(x === 1) {
+    //         alert('로그인 후 이용가능합니다');
+    //     } else if(x === 2) {
+    //         alert('기업회원은 이용할 수 없는 메뉴입니다')
+    //     } else if(x === 3) {
+    //         location.href = "/pRegiForm";
+    //     }
+    // }
+
+    $(document).ready(function(){
+        $('.tab-a').click(function(){
+            $(".tab").removeClass('tab-active');
+            $(".tab[data-id='"+$(this).attr('data-id')+"']").addClass("tab-active");
+            $(".tab-a").removeClass('active-a');
+            $(this).parent().find(".tab-a").addClass('active-a');
+        });
+    });
+
+
+    let subbanner = $(".sub-banner");
+
+    $(document).ready(function () {
+        subbanner.not(".active").hide(); //화면 로딩 후 첫번째 div를 제외한 나머지 숨김
+
+        setInterval(nextSlide, 4000); //4초(4000)마다 다음 슬라이드로 넘어감
+    });
+
+    function prevSlide() {
+        subbanner.hide(); //모든 div 숨김
+        var allSlide = subbanner; //모든 div 객체를 변수에 저장
+        var currentIndex = 0; //현재 나타난 슬라이드의 인덱스 변수
+
+        //반복문으로 현재 active클래스를 가진 div를 찾아 index 저장
+        subbanner.each(function (index, item) {
+            if ($(this).hasClass("active")) {
+                currentIndex = index;
+            }
+
+        });
+
+        //새롭게 나타낼 div의 index
+        var newIndex = 0;
+
+        if (currentIndex <= 0) {
+            //현재 슬라이드의 index가 0인 경우 마지막 슬라이드로 보냄(무한반복)
+            newIndex = allSlide.length - 1;
+        } else {
+            //현재 슬라이드의 index에서 한 칸 만큼 뒤로 간 index 지정
+            newIndex = currentIndex - 1;
+        }
+
+        //모든 div에서 active 클래스 제거
+        subbanner.removeClass("active");
+
+        //새롭게 지정한 index번째 슬라이드에 active 클래스 부여 후 show()
+        subbanner.eq(newIndex).addClass("active");
+        subbanner.eq(newIndex).show();
+
+    }
+
+    //다음 슬라이드
+    function nextSlide() {
+        subbanner.hide();
+        var allSlide = subbanner;
+        var currentIndex = 0;
+
+        subbanner.each(function (index, item) {
+            if ($(this).hasClass("active")) {
+                currentIndex = index;
+            }
+
+        });
+
+        var newIndex = 0;
+
+        if (currentIndex >= allSlide.length - 1) {
+            //현재 슬라이드 index가 마지막 순서면 0번째로 보냄(무한반복)
+            newIndex = 0;
+        } else {
+            //현재 슬라이드의 index에서 한 칸 만큼 앞으로 간 index 지정
+            newIndex = currentIndex + 1;
+        }
+
+        subbanner.removeClass("active");
+        subbanner.eq(newIndex).addClass("active");
+        subbanner.eq(newIndex).show();
+
+    }
+
+    let page = 1;       // 목록의 페이지 번호 (시작페이지 1)
+    let limit1 = '';
+    let limit2 = ''; // 한 페이지에 출력될 목록의 개수
+    let count = 0;      // 목록의 총 개수
+    let list = [];      // 목록을 담기 위한 배열
+    let catNo1 = 1;
+    let catNo2 = 2;
+
+    if(catNo1 === 1){
+        limit1 = 6;  // 한 페이지에 출력될 목록의 개수
+    }
+
+    if(catNo2 === 2){
+        limit2 = 8;  // 한 페이지에 출력될 목록의 개수
+    }
+    console.log(catNo1);
+    console.log(catNo2);
+
+    $(()=>{
+        $.ajax({
+            url : "boList",
+            type : "post",
+            data : {
+                "catNo" : catNo1
+            },
+            dataType : "json",
+            success : function(result){
+                console.log(result);
+                list = result;
+                pagingList1(page, list);
+            },
+            error : function (){
+                alert('게시판 불러오기 실패!');
+            }
+        });
+    });
+
+    // 리스트 출력 함수
+    function pagingList1(page, list){
+        count = list.length;
+
+        console.log(`page# : ${page}` );
+        console.log(`count# : ${count}` );
+
+        let maxPage = Math.ceil(count/limit1);
+
+        if(page > maxPage){
+            if(maxPage===0){
+                maxPage = 1;
+            }
+
+            page = maxPage;
+        }
+
+        let startRow = (page - 1) * limit1;
+        let endRow = page * limit1 - 1;
+
+        if(endRow >= count){
+            endRow = count-1;
+        }
+
+        output = ``;
+
+        for(let i=startRow; i<=endRow; i++){
+            console.log(list[i].btitle);
+            output += `
+                <tr>
+                    <td>${list[i].bdate.substring(0, 10)}</td>
+                    <td class="board-title"><a href="/bView/${list[i].bno}">${list[i].btitle}</td>
+                 <td>`;
+            if (list[i].member.mno===-1 && list[i].company.comNo!==-1){
+                output += `${list[i].company.cname}`;
+            }else if (list[i].company.comNo===-1 && list[i].member.mno!==-1){
+                output += `${list[i].member.nickName}`;
+            }
+            output +=`</td>
+            <td>${list[i].bhit}</td>
+
+                </tr>`;
+        }
+        $('#bdList').html(output);
+
+    }
+
+    $(()=>{
+        $.ajax({
+            url : "boList",
+            type : "post",
+            data : {
+                "catNo" : catNo2
+            },
+            dataType : "json",
+            success : function(result){
+                console.log(result);
+                list = result;
+                pagingList2(page, list);
+            },
+            error : function (){
+                alert('게시판 불러오기 실패!');
+            }
+        });
+    });
+
+    // 리스트 출력 함수
+    function pagingList2(page, list){
+        count = list.length;
+
+        console.log(`page# : ${page}` );
+        console.log(`count# : ${count}` );
+
+        let maxPage = Math.ceil(count/limit2);
+
+        if(page > maxPage){
+            if(maxPage===0){
+                maxPage = 1;
+            }
+
+            page = maxPage;
+        }
+
+        let startRow = (page - 1) * limit2;
+        let endRow = page * limit2 - 1;
+
+        if(endRow >= count){
+            endRow = count-1;
+        }
+
+        output = ``;
+
+        for(let i=startRow; i<=endRow; i++){
+            console.log(list[i].bfileName);
+
+            output += `<div style="display: inline-block; padding-left:10px;" >
+                <table class="gallery-box">
+                    <tr>
+                        <th class="post"><a href="/gView/${list[i].bno}"><img src="/upload/${list[i].bfileName}" style="width: 130px" height="100px";/></th>
+                    </tr>
+                    <tr>
+                        <th class="main-text"">${list[i].btitle}</th>
+                    </tr>
+                    <tr>
+                        <th class="main-hit"><img src="img/hit.png" style="width: 10px; height: 10px;">&ensp;${list[i].bhit}&ensp;`
+
+                    if (list[i].member.mno===-1 && list[i].company.comNo!==-1){
+                        output += `${list[i].company.cname}`;
+                    }else if (list[i].company.comNo===-1 && list[i].member.mno!==-1){
+                        output += `${list[i].member.nickName}`;
+                    }
+
+                    output +=`</th>
+                                   </tr>
+                                   </table>
+                                </div> &ensp;`;
+            if ((i + 1) % 4 === 0) {
+                output += `
+                   <br><br>
+                    `;
+
+            }
+        }
+        $('#gaList ').html(output);
+
+    }
+
+    // 로그아웃(id="logout") 버튼 클릭시
+    $('#mlogout').click(()=>{
+        location.href="/mLogout";
+    });
+
+    $('#clogout').click(()=>{
+        location.href="/cLogout";
+    });
+
+    // 카카오로그아웃
+    $('#kakaoLogout').click(()=>{
+        location.href="kLogout";
+    });
+
+    // 카카오 연결해제
+    $('#kakaoDiscon').click(()=>{
+        location.href="kDiscon";
+    });
+
+
+
+    // 회원목록(id="mlist") 버튼 클릭시
+    $('#mlist').click(()=>{
+        location.href="/mListForm";
+    });
+
+    // 회원 내정보(id="myinfo1") 버튼 클릭시
+    $('#mView').click(()=>{
+        location.href=`/mView/[[${session.loginNo}]]`;
+    });
+
+    // 기업 내정보(id="myinfo2") 버튼 클릭시
+    $('#myinfo2').click(()=>{
+        location.href=`/cView/[[${session.comNo}]]`;
+    });
+
+    // 카카오 내정보(id="myinfo3") 버튼 클릭시
+    $('#myinfo3').click(()=>{
+        location.href=`/mView/[[${session.loginNo}]]`;
+    });
+
+    // 게시글 작성(id="write") 버튼 클릭시
+    $('#write').click(()=>{
+        location.href=`/bWriteForm`;
+    });
+
+    // 게시글 목록(id="blist") 버튼 클릭시
+    // $('#blist').click(()=>{
+    //     location.href=`/bList`;
+    // });
+
+    // 사업자 진위확인 ajax
+    let checkResult = $('#checkResult');
+    $('#checkCbsNum').click(()=>{
+        let cbsNum = $('#cbsNum').val();
+        console.log('입력한 사업자 번호:');
+        console.log(cbsNum);
+        let data = {
+            "b_no": [cbsNum] // 사업자번호 "xxxxxxx" 로 조회 시,
+        };
+
+        $.ajax({
+            url: "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=T77QIGc7aWpXzvO%2FhhJyhEpsp2zWGB%2FLbRjyZ2Xyv9OBjcGm68Ln71v8Jna3yy0Sya3rDFZV17jkUvJYHGtC%2FA%3D%3D",  // serviceKey 값을 xxxxxx에 입력
+            type: "POST",
+            data: JSON.stringify(data), // json 을 string으로 변환하여 전송
+            dataType: "JSON",
+            contentType: "application/json",
+            accept: "application/json",
+            success: function(result) {
+                console.log(result);
+                console.log(result.data[0].b_stt)
+                let resultData = result.data[0].b_stt;
+                console.log(typeof(resultData));
+                if(resultData.length == 0) {
+                    checkResult.html('등록되지 않은 사업자 번호입니다');
+                    checkResult.css("color", "red");
+                } else {
+                    checkResult.html('사업자 번호가 확인되었습니다')
+                    checkResult.css("color", "green");
+                }
+            },
+            error: function(result) {
+                console.log(result.responseText); //responseText의 에러메세지 확인
+            }
+        });
+    });
+
+
+    $('#kakaoPay').click(()=>{
+        let qnt = $('#qnt').val()
+        location.href = "kPayReady/" + qnt;
+    });
+
+    $('#kakaoPay').click(()=>{
+        let qnt = Number($('#qnt').val());
+        location.href = "kPayReady/" + qnt;
+    });
+
+    $('#sRegiForm').click(()=>{
+        location.href = "sRegiForm";
+    });
+
+    // 로그인 입력 체크 //
+    $('#logincheck1').click(()=>{
+        let MID = $('#MID').val();
+        let mPw = $('#mPw').val();
+
+        if(MID.length === 0 && mPw.length === 0){
+            alert('아이디와 비밀번호를 입력해 주세요');
+        } else if(MID.length === 0 && mPw.length > 1) {
+            alert('아이디를 입력해 주세요');
+        } else if(MID.length > 1 && mPw.length === 0) {
+            alert('비밀번호를 입력해 주세요');
+        }  else if(MID.length > 1 && mPw.length > 1) {
+            mLogin.submit();
+        }
+
+    });
+
+    $('#logincheck2').click(()=>{
+        let cId = $('#cId').val();
+        let cPw = $('#cPw').val();
+        console.log(cId, cPw);
+        if(cId.length === 0 && cPw.length === 0){
+            alert('아이디와 비밀번호를 입력해 주세요');
+        } else if(cId.length === 0 && cPw.length > 1) {
+            alert('아이디를 입력해 주세요');
+        } else if(cId.length > 1 && cPw.length === 0) {
+            alert('비밀번호를 입력해 주세요');
+        }  else {
+            cLogin.submit();
+        }
+    });
+
+    document.getElementById("mPw").addEventListener("keyup", function(event) {
+    // $('#mPw').keyup(()=>{
+        if (event.key === "Enter") {
+            event.preventDefault();
+            document.getElementById("logincheck1").click();
+        }
+    });
+
+    document.getElementById("cPw").addEventListener("keyup", function(event) {
+    // $('#cPw').keyup(()=>{
+        if (event.key === "Enter") {
+            event.preventDefault();
+            document.getElementById("logincheck2").click();
+        }
+    });
+</script>
+
+</html>

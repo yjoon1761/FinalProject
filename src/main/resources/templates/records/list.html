@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/petcard.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="/js/page.js"></script>
+
+    <title>펫디컬 바우와우</title>
+
+</head>
+
+<body>
+<section id="header" th:insert="~{header :: headerFragment}"></section>
+
+<section id="content">
+    <article class="pcboard-content">
+        <div id="pcboard-title">
+            <h1>진료목록</h1>
+        </div>
+        <div class="plist-head">
+            <select id="limit" class="list-category">
+                <option value="5">5개씩</option>
+                <option value="10">10개씩</option>
+                <option value="20">20개씩</option>
+            </select>
+
+            <select id="category" class="list-name">
+                <option value="PNAME">이름</option>
+            </select>
+
+            <input type="text" id="keyword" class="list-search"/>
+
+            <button class="list-btn" id="btnSearch"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+
+        <table class="board-table">
+            <thead>
+            <tr>
+                <th class="th-pname">진료날짜</th>
+                <th class="th-pdate">강아지이름</th>
+                <th class="th-pdoc">진료항목</th>
+                <th class="th-pdoc">담당의</th>
+            </tr>
+            </thead>
+
+            <tbody id="recList"></tbody>
+
+        </table>
+        <tfoot>
+        <tr>
+            <th colspan="5" id="numbering"></th>
+        </tr>
+        </tfoot>
+    </article>
+</section>
+
+<section id="footer" th:insert="~{footer :: footerFragment}"></section>
+</body>
+
+<script th:src="@{http://code.jquery.com/jquery-latest.min.js}"></script>
+<script>
+    let page = 1;
+    let limit = 10;
+    const block = 5;
+    let count = 0;
+    let list = [];
+
+    $(() => {
+        $.ajax({
+            url: "/memRecList",
+            type: "post",
+            dataType: "json",
+            success: function (result) {
+                list = result;
+                pagingList(page, list);
+            },
+            error: function () {
+                alert('진료내역이 없습니다.');
+            }
+        });
+    });
+
+    $('#limit').change(() => {
+        page = 1;
+        limit = Number($('#limit').val());
+        pagingList(page, list);
+    });
+
+    $('#btnSearch').click(() => {
+        let category = $('#category').val();
+        let keyword = $('#keyword').val();
+
+        $.ajax({
+            url: "rSearchList",
+            type: "post",
+            data: {
+                "category": category,
+                "keyword": keyword
+            },
+            dataType: "json",
+            success: function (result) {
+                list = result;
+                pagingList(page, list);
+            },
+            error: function () {
+                alert('rSearchList함수 호출 실패!');
+            }
+        });
+    });
+
+    function pagingList(page, list) {
+        count = list.length;
+
+        console.log(`page# : ${page}`);
+        console.log(`count# : ${count}`);
+
+        let maxPage = Math.ceil(count / limit);
+
+        if (page > maxPage) {
+            if (maxPage == 0) {
+                maxPage = 1;
+            }
+
+            page = maxPage;
+        }
+
+        let startRow = (page - 1) * limit;
+        let endRow = page * limit - 1;
+
+        if (endRow >= count) {
+            endRow = count - 1;
+        }
+
+        let startPage = ((Math.ceil(page / block)) - 1) * block + 1;
+        let endPage = startPage + block - 1;
+
+        if (endPage > maxPage) {
+            endPage = maxPage;
+        }
+
+        output = ``;
+
+
+        for (let i = startRow; i <= endRow; i++) {
+            output += `
+                <tr>
+                    <td><a href="/View/${list[i].rno}">${list[i].rdate}</td>
+                    <td>${list[i].pet.pname}</td>
+                    <td>${list[i].rcategory}</td>
+                    <td>${list[i].rname}</td>
+
+                </tr>
+            `;
+        }
+
+        $('#recList').html(output);
+
+        let pageNums = [];
+        let prev = (page - 1 < 1 ? 1 : page - 1);
+        let next = (page + 1 >= maxPage ? maxPage : page + 1)
+
+        if (page <= 1) {
+            pageNums.push(` < `);
+        } else {
+            pageNums.push(`<a class="prev" href="#" data-page=${prev}> < </a>`);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            if (page == i) {
+                pageNums.push(` ${i} `);
+            } else {
+                pageNums.push(`<a class="iNum" href="#" data-page=${i}> ${i} </a>`);
+            }
+        }
+
+        if (page >= maxPage) {
+            pageNums.push(` > `);
+        } else {
+            pageNums.push(`<a class="next" href="#" data-page=${next}> > </a>`);
+        }
+
+        $('#numbering').html(pageNums);
+
+        $('#numbering a').click(function (e) {
+            page = parseInt($(this).data('page'));
+            console.log(`click page# : ${page}`);
+
+            pagingList(page, list);
+        });
+    }
+</script>
+
+</html>
+

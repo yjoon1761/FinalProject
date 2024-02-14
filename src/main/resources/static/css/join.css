@@ -1,0 +1,95 @@
+.join-table input{
+    width: 250px;
+    height: 30px;
+}
+.join-tab-container{
+    text-align: center;
+    border-radius: 4px;
+}
+
+.join-tab-menu ul li{
+    margin: 30px;
+    list-style-type: none;
+    display: inline-block;
+    transform: translateX(10px);
+}
+.join-tab-menu ul li a{
+    font-size: 30px;
+    text-decoration: none;
+    color: rgba(0,0,0,0.4);
+    background-color: #faf4c0;
+    padding: 7px 25px;
+    border-radius: 4px;
+    cursor: grabbing;
+}
+.join-tab-menu ul li a.join-active-a{
+    background-color: sandybrown;
+    color: #ffffff;
+    width: 50px;
+}
+
+.join-tab{
+    display: none;
+}
+
+.join-tab-active{
+    display: block;
+}
+
+.join-table, .join-table td, .join-table th {
+    border: 3px solid sandybrown;
+    border-collapse: collapse;
+    width: 50px;
+    height: 40px;
+}
+
+.join-table {
+    margin: auto;
+    width: 50%;
+    height: 650px;
+    text-align: center;
+}
+
+.join-table input[type="radio"]{
+    width: 50px;
+    height: 20px;
+}
+
+#mFile {
+    transform: translateY(13px);
+}
+
+#mEmail{
+    margin-left: 20px;
+}
+#checkEmail{
+    width: 80px;
+}
+#sample6_postcode{
+    width: 150px;
+    margin-left: -33px;
+    margin-top: 20px;
+}
+#postcode-button{
+    width: 60px;
+}
+#sample6_detailAddress{
+    margin-bottom: 20px;
+}
+.gender{
+    margin-left: 30px;
+}
+#mProfileName{
+    text-align: center;
+}
+
+.join-section:nth-child(odd) {
+    background-color: #faf4c0;
+}
+
+.join-button input{
+    width: 100px;
+    height: 70%;
+    background-color: sandybrown;
+    border-radius: 4px;
+}

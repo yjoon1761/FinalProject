@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" th:href="@{css/style.css}">
+    <link rel="shortcut icon" th:href="@{favicon/favicon.ico}" type="image/x-icon">
+
+    <title></title>
+</head>
+
+<body>
+
+<div th:fragment="footerFragment">
+    <p class="footer-menu"><a th:href="@{#}">회사소개</a> <a th:href="@{#}">제휴제안</a> <a th:href="@{#}">이용약관</a> <a th:href="@{#}">개인정보처리방침</a> <a th:href="@{#}">청소년보호정책</a> <a th:href="@{#}">고객센터</a> <a th:href="@{#}" class="bowwow">ⓒbowwow.co</a></p>
+    <p class="site-addr">(22223)인천 미추홀구 매소홀로488번길 6-32 태승빌딩 5층 (학익동 663-1)</p>
+</div>
+
+</body>
+
+<script th:src="@{http://code.jquery.com/jquery-latest.min.js}"></script>
+<script>
+
+</script>
+
+</html>

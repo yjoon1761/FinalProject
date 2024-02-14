@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/cindex.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="/js/company.js"></script>
+
+    <title>기업메인 페이지</title>
+    <style>
+        /* modal */
+        .modal {
+            position: absolute;
+            display: none;
+            justify-content: center;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 766px;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 3;
+        }
+
+        .modal_content {
+            position: absolute;
+            top: 50%;
+            left: 36.5%;
+            width: 400px;
+            height: 625px;
+            padding: 40px;
+            text-align: center;
+            background-color: rgb(255, 255, 255);
+            border-radius: 10px;
+            box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.15);
+            transform: translateY(-50%);
+            overflow: scroll;
+        }
+
+        .modal-title i {
+            font-size: 30px;
+            transform: translate(200px, -20px);
+        }
+    </style>
+</head>
+
+<body>
+
+<section class="sidebar" th:insert="~{/company/sidebar :: sidebarFragment}"></section>
+
+<section class="res_section">
+    <div class="cmain-title">
+        <h1>예약 내역</h1>
+    </div>
+    <hr class="header_line">
+    <span>날짜선택</span>
+    <input type="date" id="currentDate">
+    &nbsp;
+    <!-- 게시글 개수 변경 -->
+    <select id="limit">
+        <option value="10">10개씩</option>
+        <option value="15">15개씩</option>
+        <option value="20">20개씩</option>
+    </select>
+    &nbsp;&nbsp;&nbsp;
+    <!-- 검색어 -->
+    <input type="text" id="keyword1" placeholder="예약자 이름으로 검색"/>
+
+    <!-- 검색버튼 -->
+    <input type="button" id="btnSearch" value="검색">
+
+    <div style="float: right;">
+        <button id="res_submit">예약 등록</button>
+    </div>
+    <table class="main-table">
+        <thead>
+        <tr>
+            <th style="width: 300px;">예약자 이름</th>
+            <th style="width: 300px;">강아지 이름</th>
+            <th style="width: 300px;">생년월일</th>
+            <th style="width: 200px;">예약 시간</th>
+            <th style="width: 200px;">예약 목적</th>
+            <th style="width: 800px;">품종</th>
+            <th style="width: 700px;">예약 내용</th>
+        </tr>
+        </thead>
+
+        <tbody id="resList"></tbody>
+
+        <tfoot>
+        <tr>
+            <th colspan="7" id="numbering"></th>
+        </tr>
+        </tfoot>
+    </table>
+
+</section>
+<div class="modal">
+    <div class="modal_content">
+        <div class="modal-title">
+            <i class="fa-solid fa-xmark"></i>
+        </div>
+        <div id="userInfo" style="transform: translateY(-30px)">
+            <form action="/resRegister" method="POST">
+                <table>
+                    <h1 style="color:#2525c4;">예약정보확인</h1>
+
+                    <tr>
+                        <th>보호자</th>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <th>펫</th>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <th>나이</th>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <th>품종</th>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <th>사진</th>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <th>내원목적</th>
+                        <td>
+                            <select name="resPurpose" style="width: 100%; text-align: center;">
+                                <option value="수술">수술</option>
+                                <option value="입원">입원</option>
+                                <option value="진료">진료</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>내용</th>
+                        <td>
+                            <textarea cols="40" rows="10" name="resContent"></textarea>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th colspan="2"><input type="button" value="접수"></th>
+                    </tr>
+
+                </table>
+            </form>
+        </div>
+
+        <div style="transform: translateY(-10px)">
+            <input type="text" placeholder="펫이름" id="keyword2"/>
+            <input type="button" id="petSearch" value="검색">
+        </div>
+
+        <div id="petInfo"></div>
+    </div>
+</div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
+<script>
+    //예약 내역 부분
+    let now = new Date();
+    let HH = String(now.getHours());
+    let mm = String(now.getMinutes()).padStart(2, "0");
+    let nowTime = HH + mm;
+    let todayStr = new Date().toISOString().substring(0, 10);
+    $('#currentDate').val(todayStr);
+
+    let page = 1;       // 목록의 페이지 번호 (시작페이지 1)
+    let limit = 10;      // 한 페이지에 출력될 목록의 개수
+    const block = 5;    // 한 페이지에 출력될 번호의 개수
+    let count = 0;      // 목록의 총 개수
+    let list = [];      // 목록을 담기 위한 배열
+    let comNo = [[${session.comNo}]];
+    console.log('comNo = ', comNo);
+
+    $(() => {
+        $.ajax({
+            url: "resList",
+            type: "post",
+            data: {
+                "comNo": comNo,
+                "todayStr": todayStr
+            },
+            dataType: "json",
+            success: function (result) {
+                console.log(result);
+                list = result;
+                pagingList(page, list);
+            },
+            error: function () {
+                alert('resList 호출 실패!');
+            }
+        });
+
+    });
+
+    $('#currentDate').change(() => {
+        let selectedDate = $('#currentDate').val();
+        console.log(selectedDate);
+        $.ajax({
+            url: "resList",
+            type: "post",
+            data: {
+                "comNo": comNo,
+                "selectedDate": selectedDate
+            },
+            dataType: "json",
+            success: function (result) {
+                console.log(result);
+                list = result;
+                pagingList(page, list);
+            },
+            error: function () {
+                alert('resList 함수 호출 실패');
+            }
+        });
+    });
+
+    // 회원목록 개수 변경
+    // id="limit"의 값이 바뀔때
+    $('#limit').change(() => {
+        page = 1;
+        limit = Number($('#limit').val());
+        pagingList(page, list);
+    });
+
+    // 검색한 목록 출력
+    $('#btnSearch').click(() => {
+        let keyword = $('#keyword1').val();
+        let selectedDate = $('#currentDate').val();
+        $.ajax({
+            url: "resSearchList",
+            type: "post",
+            data: {
+                "keyword": keyword,
+                "selectedDate": selectedDate
+            },
+            dataType: "json",
+            success: function (result) {
+                console.log(result);
+                list = result;
+                pagingList(page, list);
+            },
+            error: function () {
+                alert('resSearch 함수 호출 실패!');
+            }
+        });
+    });
+
+    // 리스트 출력 함수
+    function pagingList(page, list) {
+        count = list.length;
+
+        console.log(`page# : ${page}`);
+        console.log(`count# : ${count}`);
+
+        let maxPage = Math.ceil(count / limit);
+
+        if (page > maxPage) {
+            if (maxPage == 0) {
+                maxPage = 1;
+            }
+
+            page = maxPage;
+        }
+
+        let startRow = (page - 1) * limit;
+        let endRow = page * limit - 1;
+
+        if (endRow >= count) {
+            endRow = count - 1;
+        }
+
+        let startPage = ((Math.ceil(page / block)) - 1) * block + 1;
+        let endPage = startPage + block - 1;
+
+        if (endPage > maxPage) {
+            endPage = maxPage;
+        }
+
+        output = ``;
+        console.log(list);
+
+        for (let i = startRow; i <= endRow; i++) {
+            let resTimeStr = '';
+            let timeArr = list[i].resTime.split(':');
+            for (let i = 0; i < timeArr.length; i++) {
+                resTimeStr += timeArr[i];
+            }
+            console.log(`resTimeStr = `, resTimeStr);
+            if (list[i].resDate < todayStr) {
+                output += `
+                <tr style="background-color:lightgray;">
+                    <td style="width: 300px;">${list[i].pet.member.mname}</td>
+                    <td style="width: 300px;">${list[i].pet.pname}</td>
+                    <td style="width: 300px;">${list[i].pet.pbirth}</td>
+                    <td style="width: 200px;">${list[i].resTime}</td>
+                    <td style="width: 200px;">${list[i].resPurpose}</td>
+                    <td style="width: 800px;">${list[i].pet.pkind}</td>
+                    <td style="width: 700px;">${list[i].resContent}</td>
+                </tr>
+            `;
+            } else if (list[i].resDate === todayStr && (nowTime) > (parseInt(resTimeStr) + 15)) {
+                output += `
+                <tr style="background-color:lightgray;">
+                    <td style="width: 300px;">${list[i].pet.member.mname}</td>
+                    <td style="width: 300px;">${list[i].pet.pname}</td>
+                    <td style="width: 300px;">${list[i].pet.pbirth}</td>
+                    <td style="width: 200px;">${list[i].resTime}</td>
+                    <td style="width: 200px;">${list[i].resPurpose}</td>
+                    <td style="width: 800px;">${list[i].pet.pkind}</td>
+                    <td style="width: 700px;">${list[i].resContent}</td>
+                </tr>
+            `;
+            } else {
+                output += `
+                <tr>
+                    <td style="width: 300px;">${list[i].pet.member.mname}</td>
+                    <td style="width: 300px;">${list[i].pet.pname}</td>
+                    <td style="width: 300px;">${list[i].pet.pbirth}</td>
+                    <td style="width: 200px;">${list[i].resTime}</td>
+                    <td style="width: 200px;">${list[i].resPurpose}</td>
+                    <td style="width: 800px;">${list[i].pet.pkind}</td>
+                    <td style="width: 700px;">${list[i].resContent}</td>
+                </tr>
+            `;
+            }
+        }
+        $('#resList').html(output);
+
+        let pageNums = [];
+        let prev = (page - 1 < 1 ? 1 : page - 1);
+        let next = (page + 1 >= maxPage ? maxPage : page + 1)
+
+        // [이전]
+        if (page <= 1) {
+            pageNums.push(` < `);
+        } else {
+            pageNums.push(`<a class="prev" href="#" data-page=${prev}> < </a>`);
+        }
+
+        // [페이지번호]
+        for (let i = startPage; i <= endPage; i++) {
+            if (page == i) {
+                pageNums.push(` ${i} `);
+
+            } else {
+                pageNums.push(`<a class="iNum" href="#" data-page=${i}> ${i} </a>`);
+            }
+        }
+
+        // [다음]
+        if (page >= maxPage) {
+            pageNums.push(` > `);
+        } else {
+            pageNums.push(`<a class="next" href="#" data-page=${next}> > </a>`);
+        }
+
+        $('#numbering').html(pageNums);
+
+        // [이전], [페이지번호], [다음]을 클릭시
+        $('#numbering a').click(function (e) {
+            page = parseInt($(this).data('page'));
+            console.log(`click page# : ${page}`);
+
+            pagingList(page, list);
+        });
+
+    }
+    // 예약 접수
+    let keyVal;
+
+    $('#petSearch').click(()=>{
+        let keyword = $('#keyword2').val();
+        $.ajax({
+            url : "/petSearch",
+            type : "post",
+            data : {
+                "keyword" : keyword
+            } ,
+            dataType : "json",
+            success : function (result){
+                console.log(result);
+                petInfo(result);
+            },
+            error : function (){
+                alert("memberSearch 함수 통신 실패");
+            }
+        });
+    });
+
+    function petInfo(list){
+        let output = "";
+
+        output += `&nbsp;<span>펫이름</span>&ensp;&ensp;&ensp;<span>보호자</span>&ensp;&ensp;&ensp;&ensp;<span>생년월일</span>`
+        for (let i in list){
+            output += "<li>";
+            output += `<a href="#" onclick="setInfo(${list[i].pno}, ${list[i].member.mno})">`;
+            output += `
+                <span>${list[i].pname}</span>&nbsp;&ensp;&ensp;<span>${list[i].member.mname}</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>${list[i].member.mbirth}</span>
+            `;
+            output += `</a></li>`;
+        }
+        $('#petInfo').html(output);
+    }
+
+    function setInfo(pNo, MNO){
+        $.ajax({
+            url : "/setInfo",
+            type : "post",
+            data : {
+                "pNo" : pNo,
+                "MNO" : MNO
+            } ,
+            dataType : "json",
+            success : function (result){
+                infoView(result);
+            },
+            error : function (){
+                alert("setInfo 함수 통신 실패");
+            }
+        });
+    }
+
+    function infoView(list){
+        let date = new Date();
+
+        let year = String(date.getFullYear());
+
+        let month = String(date.getMonth() + 1).padStart(2, "0");
+
+        let day = String(date.getDate()).padStart(2, "0");
+
+        let resDate = year + "-" + month + "-" + day;
+
+        let HH = String(date.getHours()).padStart(2, "0");
+
+        let mm = String(date.getMinutes()).padStart(2, "0");
+
+        let resTime = HH + ":" + mm;
+
+        let output = "";
+
+        output += `
+            <form action="/rRegister2" method="POST" name="submitForm">
+            <table>
+            <div>
+            <h1>예약정보확인</h1>
+            </div>
+
+            <tr>
+                <th>보호자</th>
+                <td>${list.member.mname}</td>
+            </tr>
+
+            <tr>
+                <th>펫</th>
+                <td>${list.pname}</td>
+            </tr>
+
+            <tr>
+                <th>나이</th>
+                <td>${list.pbirth}</td>
+            </tr>
+
+            <tr>
+                <th>품종</th>
+                <td>${list.pkind}</td>
+            </tr>
+
+            <tr>
+                <th>사진</th>
+                <td><img src="/profile/${list.pfileName}" width="150px"></td>
+            </tr>
+
+            <tr>
+                <th>내원목적</th>
+                <td>
+                    <select name="resPurpose">
+                        <option value="수술">수술</option>
+                        <option value="입원">입원</option>
+                        <option value="진료">진료</option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <th>내용</th>
+                <td>
+                    <textarea cols="40" rows="20" name="resContent"></textarea>
+                    <input type="hidden" name="pNo" value="${list.pno}">
+                    <input type="hidden" name="resDate" value="${resDate}">
+                    <input type="hidden" name="resTime" value="${resTime}">
+                </td>
+            </tr>
+
+            <tr>
+                <th colspan="2"><button id="submit">접수</button></th>
+            </tr>
+
+            </table>
+            </form>
+        `;
+
+        $('#userInfo').html(output);
+    }
+
+    $(function keyCheck() {
+        $.ajax({
+            url: '/keyCheck',
+            type: 'post',
+            dataType: 'text',
+            success: function(result) {
+                keyVal = result;
+                if (keyVal.length !== 0) {
+                    console.log(keyVal);
+                    userSelect();
+                }
+                setTimeout(keyCheck, 500);
+            },
+            error: function() {
+                alert('keyCheck 함수 통신 실패');
+            }
+        });
+    });
+
+    function userSelect(){
+        $.ajax({
+            url : "/userSelect",
+            type : "post",
+            data : {
+                "keyVal" : keyVal
+            },
+            dataType: "json",
+            success: function (result){
+                userView(result);
+            },
+            error: function (){
+                alert("userSelect 함수 통신 실패");
+            }
+        });
+    }
+
+    function userView(list){
+
+        let date = new Date();
+
+        let year = String(date.getFullYear());
+
+        let month = String(date.getMonth() + 1).padStart(2, "0");
+
+        let day = String(date.getDate()).padStart(2, "0");
+
+        let resDate = year + "-" + month + "-" + day;
+
+        let HH = String(date.getHours()).padStart(2, "0");
+
+        let mm = String(date.getMinutes()).padStart(2, "0");
+
+        let resTime = HH + ":" + mm;
+
+        let output = "";
+
+        output += `
+            <form action="/rRegister2" method="POST" name="submitForm">
+            <table>
+            <div>
+            <h1>예약정보확인</h1>
+            </div>
+
+            <tr>
+                <th>보호자</th>
+                <td>${list.pet.member.mname}</td>
+            </tr>
+
+            <tr>
+                <th>펫</th>
+                <td>${list.pet.pname}</td>
+            </tr>
+
+            <tr>
+                <th>나이</th>
+                <td>${list.pet.pbirth}</td>
+            </tr>
+
+            <tr>
+                <th>품종</th>
+                <td>${list.pet.pkind}</td>
+            </tr>
+
+            <tr>
+                <th>사진</th>
+                <td><img src="/profile/${list.pet.pfileName}" width="150px"></td>
+            </tr>
+
+            <tr>
+                <th>내원목적</th>
+                <td>
+                    <select name="resPurpose">
+                        <option value="수술">수술</option>
+                        <option value="입원">입원</option>
+                        <option value="진료">진료</option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <th>내용</th>
+                <td>
+                    <textarea cols="40" rows="20" name="resContent"></textarea>
+                    <input type="hidden" name="pNo" value="${list.pet.pno}">
+                    <input type="hidden" name="resDate" value="${resDate}">
+                    <input type="hidden" name="resTime" value="${resTime}">
+                </td>
+            </tr>
+
+            <tr>
+                <th colspan="2"><button id="submit">접수</button></th>
+            </tr>
+
+            </table>
+            </form>
+        `;
+
+        $('#userInfo').html(output);
+    }
+
+    $('#submit').click(()=>{
+        $('#submitForm').submit();
+    });
+
+
+    // 모달
+
+    let modal = document.querySelector('.modal');
+
+    $("#res_submit").click(() => {
+        modal.style.display = "flex";
+    });
+
+    $('.fa-solid').click(()=>{
+        modal.style.display = "none";
+    });
+    // 펫 정보 확인 끝
+
+    // 예약 내역 끝
+</script>
+
+</html>

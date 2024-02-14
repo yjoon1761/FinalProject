@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/cindex.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="/js/company.js"></script>
+
+    <title>담당의 등록</title>
+    <style>
+
+    </style>
+</head>
+
+<body onload="idCheck()">
+
+<section class="sidebar" th:insert="~{/company/sidebar :: sidebarFragment}"></section>
+<section id="dRegi-content">
+    <div class="cmain-title">
+        <h1>의사 등록</h1>
+    </div>
+    <hr class="header_line">
+    <form action="/dRegister" method="post" enctype="multipart/form-data">
+        <table class="dRegi-table">
+
+            <tr>
+                <td><input type="text" name="dName" placeholder="이름"></td>
+            </tr>
+
+            <tr>
+                <td><textarea name="dContent" placeholder="약력"></textarea></td>
+            </tr>
+
+            <tr>
+                <th><div class="filebox">
+                    <input class="upload-name" value="첨부파일" placeholder="첨부파일">
+                    <label for="dFile">파일찾기</label>
+                    <input type="file" name="dFile" id="dFile">
+                </div>
+                    <input type="hidden" th:if="${session.comNo ne null}" name="comNo" th:value="${session.comNo}">
+                </th>
+            </tr>
+
+            <tr>
+                <th colspan="2" id="hiddenArea"></th>
+            </tr>
+        </table>
+    </form>
+</section>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
+<script>
+    let comNo = [[${session.comNo}]];
+    console.log('comNo = ', comNo);
+
+    let a = 0;
+
+    function idCheck() {
+        a = Math.floor(Math.random() * 8999) + 1000;
+
+        $.ajax({
+            type: "POST",
+            url: "/dIdCheck",
+            data: {
+                "dId": a
+            },
+            dataType: "text",
+            success: function (result) {
+                if (result === "OK") {
+                    let output = "";
+                    output += `
+              <input type="submit" value="등록">
+              <input type="hidden" name="dId" value="${a}">`;
+                    $('#hiddenArea').html(output);
+                } else {
+                    idCheck();
+                }
+            },
+            error: function () {
+                alert("dIdCheck통신 실패");
+            }
+        });
+    }
+
+    $("#dFile").on('change',function(){
+        var fileName = $("#dFile").val().substring(12);
+        $(".upload-name").val(fileName);
+    });
+
+</script>
+
+</html>

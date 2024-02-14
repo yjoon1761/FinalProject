@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/cindex.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="/js/company.js"></script>
+
+    <title>의사 수정</title>
+<body>
+<section class="sidebar" th:insert="~{/company/sidebar :: sidebarFragment}"></section>
+<section id="dRegi-content">
+    <div class="cmain-title">
+        <h1>담당의 정보 수정</h1>
+    </div>
+    <form action="/dModify" method="POST" enctype="multipart/form-data">
+        <table class="dRegi-table">
+
+            <tr>
+                <td><input type="text" name="dName" th:value="${modify.DName}"/></td>
+            </tr>
+
+            <tr>
+                <td><textarea cols="40" rows="20" name="dContent">[[${modify.DContent}]]</textarea></td>
+            </tr>
+
+            <tr>
+                <th>
+                    <div class="filebox">
+                        <input class="upload-name" value="첨부파일" placeholder="프로필사진">
+                        <label for="dFile">파일찾기</label>
+                        <input type="file" name="dFile" id="dFile">
+                        <input type="hidden" name="dFileName" th:value="${modify.DFileName}">
+                        <input type="hidden" name="comNo" th:value="${modify.company.comNo}">
+                        <input type="hidden" name="dNo" th:value="${modify.DNo}">
+                        <input type="hidden" name="dId" th:value="${modify.DId}">
+                    </div>
+                </th>
+            </tr>
+
+            <tr>
+                <th colspan="2">
+                    <input type="submit" value="수정">
+                    <input type="reset" value="초기화">
+                </th>
+            </tr>
+        </table>
+    </form>
+</section>
+</body>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
+<script>
+    let check_id = false;
+
+    $('#dId').keyup(() => {
+        let dId = $('#dId').val();
+        let check = $('#checkId');
+        let spc = dId.search(/\s/);
+
+        $.ajax({
+            type: "POST",
+            url: "/DocIdCheck",
+            data: {
+                "dId": dId,
+            },
+            dataType: "text",
+            success: function (result) {
+                if (dId.length == 0) {
+                    check.html('아이디를 입력해주세요');
+                    check.css('color', 'lightgray');
+                } else if (spc != -1) {
+                    check.html('공백없이 입력해주세요');
+                    check.css('color', 'red');
+                } else if (result == "OK" && spc == -1) {
+                    check.html('사용 가능한 아이디');
+                    check.css('color', 'blue');
+                    check_id = true;
+                } else {
+                    check.html('사용중인 아이디');
+                    check.css('color', 'red');
+                }
+            },
+            error: function () {
+                alert('DocIdCheck 통신 실패!');
+            }
+        });
+    });
+
+    $("#dFile").on('change',function(){
+        var fileName = $("#dFile").val().substring(12);
+        $(".upload-name").val(fileName);
+    });
+</script>
+</html>

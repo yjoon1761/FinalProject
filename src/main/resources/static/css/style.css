@@ -1,0 +1,484 @@
+* {
+    padding: 0;
+    margin: 0
+}
+
+li {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/*header*/
+#header {
+    background-color: #faf4c0;
+    width: 100%;
+    height: 200px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.notice{
+    font-size: 30px;
+    float: right;
+    position: relative;
+}
+
+.header_line{
+    height: 1px;
+    background-color: brown;
+    border: 0;
+}
+
+
+/*start nav*/
+#menu{
+    transform: translateY(50px);
+    position:relative;
+    background-color: rgba(250, 244, 192, 0.7);
+    height: 50px;
+    margin-top: 40px;
+    z-index: 2;
+    color: brown;
+}
+
+#menu a, #menu a:visited, #menu a:active{
+    color: brown;
+}
+
+#header h1.main-title {
+    transform: translateY(35px);
+    font-size: 50px;
+    font-family: 'FontAwesome', serif;
+    background-color: #faf4c0;
+    color: palevioletred;
+}
+
+#header h1.main-title:active {
+    color: palevioletred;
+}
+
+#header h1.main-title:visited {
+    color: palevioletred;
+}
+
+.main1{
+    height: 100%;
+    width: 100%;
+    margin: 0 auto;
+    display: inline-block;
+    background-color: #faf4c0;
+}
+.main1>li {
+    float: left;
+    width: 16.6%; /* 20*5 = 100(전체길이100에서 카테고리가 6개라 16으로 나눔)*/
+    line-height: 50px;
+    position: relative;
+
+}
+.main1>li:hover .main2 {
+    left: 0;
+}
+.main1>li a {
+    display: block;
+    background-color: #faf4c0;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: grabbing;
+}
+
+.main2 {
+    position: absolute;
+    top: 50px;
+    left: -9999px;
+    width: 100%;
+    border: 1px solid #57523E;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+
+.main2 li:hover {
+    border-left: 5px solid #D94C1A;
+    cursor: pointer;
+}
+
+.main2>li {
+    position: relative;
+
+}
+.main2>li:hover .main3 {
+    left: 100%;
+}
+.main2>li a, .main3>li a {
+    border-radius: 10px;
+    margin: 10px;
+}
+
+nav {
+    margin-top: 20px;
+}
+.cindex{
+    color: #1c294e;
+}
+
+/*end nav*/
+
+/*end header*/
+
+/*content*/
+#board-title h1 {
+    text-align: center;
+    color: brown;
+    padding-top: 20px;
+    margin-bottom: 20px;
+    font-size: 30px;
+}
+#content {
+    z-index: 1;
+    background-color: rgba(250, 244, 192, 0.3);
+    margin-bottom: 10px;
+    float: none;
+}
+
+.top-content {
+    width: 100%;
+    height: 350px;
+    margin-bottom: 10px;
+}
+
+.banner {
+    width: 66.5%;
+    height: 320px;
+    float: left;
+    margin-left: 2.5%;
+    border: 1px solid brown;
+}
+
+.banner-list {
+    position: relative;
+    height: 350px;
+    width: 100%;
+}
+
+.banner-list img {
+    width: 100%;
+    height: 320px;
+}
+
+.fade {
+    -webkit-animation-name: fade;
+    -webkit-animation-duration: 1.5s;
+    animation-name: fade;
+    animation-duration: 1.5s;
+}
+
+@-webkit-keyframes fade {
+    from {
+        opacity: .4;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fade {
+    from {opacity: .4}
+    to {opacity: 1}
+}
+
+.prev, .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    margin-top: -22px;
+    color: black;
+    font-weight: bold;
+    font-size: 18px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+}
+
+.next {
+    right: 0;
+    border-radius: 3px 0 0 3px;
+}
+#login {
+    margin: -4px 0 0 17px;
+}
+
+/* 로그인 실패시 경고글 */
+.login_warn{
+    text-align: center;
+    color : red;
+}
+
+
+.login-section {
+    width: 26.5%;
+    height: 320px;
+    float: right;
+    text-align: center;
+    color: black;
+    font-size: 20px;
+    margin-right: 2.5%;
+    border: 1px solid brown;
+    display: flex;
+}
+
+.login-menu a {
+    font-size: 13px;
+    width: 26.5%;
+}
+
+.login-menu a:hover {
+    cursor: pointer;
+}
+
+.login-menu a:visited {
+    color: black;
+}
+
+.login {
+    padding-right: 20px;
+}
+
+.login-area{
+    transform: translate(-17px, 68px);
+}
+
+.login-text {
+    height: 28px;
+}
+
+.kakao-login, .login-menu {
+    transform: translateY(50px);
+}
+
+.kakao-login img {
+    width: 250px;
+    transform: translateY(10px);
+}
+
+.tab-container{
+    margin: 7% 10%;
+    border-radius: 4px;
+}
+
+.tab-menu {
+    height: 22px;
+}
+
+.tab-menu ul li{
+    list-style-type: none;
+    display: inline-block;
+    transform: translateX(10px);
+}
+.tab-menu ul li a{
+    text-decoration: none;
+    color: rgba(0,0,0,0.4);
+    background-color: #faf4c0;
+    padding: 7px 25px;
+    border-radius: 4px;
+    cursor: grabbing;
+}
+.tab-menu ul li a.active-a{
+    background-color: sandybrown;
+    color: #ffffff;
+}
+
+.tab{
+    display: none;
+}
+
+.tab-active{
+    display: block;
+}
+
+.btn-submit{
+    margin: -30px 0 10px 255px;
+    transform: translate(-59px,34px);
+}
+
+.btn-submit input {
+    width: 64px;
+    height: 64px;
+}
+
+#logout1, #logout2, #klogout {
+    width: 310px;
+}
+
+.logout1-area h4, .logout2-area h4, .klogout-area h4 {
+    transform: translateX(5px);
+}
+
+.logout1-area button, .logout2-area button {
+    /*transform: translateY(40px);*/
+    width: 100px;
+    height: 50px;
+    background-color: sandybrown;
+    border-radius: 4px;
+    margin: 10px;
+}
+
+.klogout-area {
+    line-height: 50px;
+}
+
+.klogout-area button {
+    width: 98px;
+    height: 50px;
+    background-color: sandybrown;
+    border-radius: 4px;
+
+}
+
+.login_img{
+    width: 150px;
+    height: 150px;
+    border-radius: 75px;
+}
+
+.bottom-content {
+    width: 100%;
+    height: 445px;
+    margin-bottom: 10px;
+}
+
+.board {
+    width: 47%;
+    height: 445px;
+    float: left;
+    margin-left: 2.5%;
+}
+
+#image{
+    width: 30px;
+}
+
+.gallery {
+    width: 47%;
+    height: 445px;
+    float: right;
+}
+
+/*end content*/
+
+
+
+/*footer*/
+#footer {
+    width: 100%;
+    height: 150px;
+    text-align: center;
+    color: rgb(128, 128, 128);
+    clear: both;
+    background-color: rgba(250, 244, 192, 0.5);
+}
+
+.footer-menu {
+    transform: translateY(60px);
+}
+
+.site-addr {
+    transform: translateY(70px);
+    color: lightgray;
+}
+
+.bowwow {
+    font-weight: bold;
+    color: black;
+}
+
+.bowwow:visited {
+    color: black;
+}
+
+.move-tab{
+    top: 0;
+    margin:20px 850px;
+    position: absolute;
+}
+
+.move-tab>a{
+    font-size: 20px;
+    color: brown;
+    cursor: grabbing;
+}
+
+.move-tab a{
+    width: 50px;
+}
+
+/*end footer*/
+
+/* 카드키 업데이트 */
+.crdlist{
+    width: 1100px;
+    margin: 0 auto;
+}
+
+.crdlist select{
+    float: right;
+}
+/* end 카드키 업데이트 */
+
+/* 카드 발급 */
+.crdsuccess{
+    width: 1100px;
+    margin: auto;
+}
+
+.crdsuccess table{
+    margin: auto;
+    font-size: 20px;
+}
+
+.crdbtn{
+    width: 1100px;
+    margin: auto;
+}
+
+.crdbtn button{
+    width: 160px;
+    height: 35px;
+    font-size: 15px;
+    margin-top: 20px;
+    margin-left: 480px;
+    background-color: sandybrown;
+    border-radius: 40px;
+}
+
+.crdDelete{
+    width: 100px;
+    height: 25px;
+    font-size: 15px;
+    background-color: sandybrown;
+    border-radius: 40px;
+}
+
+#petArea select{
+    border-radius: 10px;
+    border: unset;
+    text-align: center;
+    width: 150px;
+    height: 30px;
+    font-size: 20px;
+    font-weight: bold;
+    color: sandybrown;
+}
+
+.pcregi-section input{
+    text-align: center;
+    height: 20px;
+    border-radius: 10px;
+    border: 1px solid blanchedalmond;
+}
+
+

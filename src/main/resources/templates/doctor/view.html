@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/cindex.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+
+    <script th:src="@{https://kit.fontawesome.com/32dee6c2b4.js}" crossorigin="anonymous"></script>
+    <script src="/js/company.js"></script>
+
+    <title>담당의 상세보기</title>
+
+</head>
+
+<body>
+<section class="sidebar" th:insert="~{/company/sidebar :: sidebarFragment}"></section>
+<div class="doc_info">
+    <div class="doc_position">
+        <h3>담당원장</h3>
+    </div>
+    <h1>[[${view.DName}]]</h1>
+    <span>[[${view.DId}]]</span>
+    <div class="content-title">약력</div>
+    <div class="doc_contents">
+        <h3>[[${view.DContent}]]</h3>
+    </div>
+</div>
+
+<div class="doc_profile">
+    <img th:src="@{|/profile/${view.dFileName}|}" width="400px;">
+    <div class="doc_btn">
+        <button id="dModiForm">수정</button>
+        <button id="dDelete">삭제</button>
+    </div>
+</div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
+<script>
+    $('#dModiForm').click(() => {
+        location.href = `/dModiForm/[[${view.dNo}]]`;
+    });
+
+    $('#dDelete').click(() => {
+        location.href = `/dDelete/[[${view.dNo}]]`;
+    });
+
+</script>
+
+</html>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.icia.petdicalbowwow.dao.DoctorDAO">
+    <select id="dSearchList" parameterType="search" resultType="doctor">
+        SELECT * FROM DOCTOR WHERE ${category} LIKE '%${keyword}%'
+    </select>
+
+    <select id="dIdCheck" parameterType="int" resultType="String">
+        SELECT DNAME FROM DOCTOR WHERE DID = #{dId}
+    </select>
+
+
+
+</mapper>
